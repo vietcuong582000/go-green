@@ -10,9 +10,9 @@
         <i class="nc-icon nc-circle-09"></i>
         <p>User Profile</p>
       </sidebar-link>
-      <sidebar-link to="/admin/table-list">
+      <sidebar-link to="/admin/product-list">
         <i class="nc-icon nc-notes"></i>
-        <p>Table list</p>
+        <p>Danh sách sản phẩm</p>
       </sidebar-link>
       <sidebar-link to="/admin/typography">
         <i class="nc-icon nc-paper-2"></i>
@@ -46,7 +46,7 @@
 
       </dashboard-content>
 
-      <content-footer></content-footer>
+<!--      <content-footer></content-footer>-->
     </div>
   </div>
 </template>

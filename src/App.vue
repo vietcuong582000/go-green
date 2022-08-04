@@ -1,8 +1,9 @@
 <template>
-  <div :class="{'nav-open': $sidebar.showSidebar}">
-    <notifications></notifications>
-    <router-view></router-view>
-  </div>
+<!--  <div :class="{'nav-open': $sidebar.showSidebar}">-->
+<!--    <notifications></notifications>-->
+<!--    <router-view></router-view>-->
+<!--  </div>-->
+  <router-view></router-view>
 </template>
 
 <script>
