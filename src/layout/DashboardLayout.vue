@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <side-bar>
+    <side-bar :style="{ display: mainPanelDisplay, opacity: mainPanelOpacity }" :title="'GO GREEN'">
       <mobile-menu slot="content"></mobile-menu>
       <sidebar-link to="/admin/overview">
         <i class="nc-icon nc-chart-pie-35"></i>
@@ -15,12 +15,12 @@
         <p>Danh sách sản phẩm</p>
       </sidebar-link>
       <sidebar-link to="/admin/typography">
-        <i class="nc-icon nc-paper-2"></i>
-        <p>Typography</p>
+        <i class="nc-icon nc-delivery-fast"></i>
+        <p>Danh sách đơn hàng</p>
       </sidebar-link>
       <sidebar-link to="/admin/icons">
-        <i class="nc-icon nc-atom"></i>
-        <p>Icons</p>
+        <i class="nc-icon nc-tag-content"></i>
+        <p>Danh mục sản phẩm</p>
       </sidebar-link>
       <sidebar-link to="/admin/maps">
         <i class="nc-icon nc-pin-3"></i>
@@ -31,16 +31,16 @@
         <p>Notifications</p>
       </sidebar-link>
 
-      <template slot="bottom-links">
-        <sidebar-link class="active"
-                      to="/admin/upgrade">
-          <i class="nc-icon nc-alien-33"></i>
-          <p>Upgrade to PRO</p>
-        </sidebar-link>
-      </template>
+<!--      <template slot="bottom-links">-->
+<!--        <sidebar-link class="active"-->
+<!--                      to="/admin/upgrade">-->
+<!--          <i class="nc-icon nc-alien-33"></i>-->
+<!--          <p>Upgrade to PRO</p>-->
+<!--        </sidebar-link>-->
+<!--      </template>-->
     </side-bar>
-    <div class="main-panel">
-      <top-navbar></top-navbar>
+    <div class="main-panel" :style="{ width: mainPanelWidth }">
+      <top-navbar @toggle-sidebar="showSideBar"></top-navbar>
 
       <dashboard-content @click="toggleSidebar">
 
@@ -65,11 +65,30 @@
       DashboardContent,
       MobileMenu
     },
+    data() {
+      return {
+        isShowSideBar: true,
+        fullWidth: '100%',
+        withSideBarWidth: 'calc(100% - 260px)'
+      }
+    },
+    computed: {
+      mainPanelWidth() {
+        return this.isShowSideBar ? this.withSideBarWidth : this.fullWidth
+      },
+      mainPanelDisplay() {
+        return this.isShowSideBar ? 'block' : 'none'
+      },
+      mainPanelOpacity() {
+        return this.isShowSideBar ? '100' : '0'
+      }
+    },
     methods: {
       toggleSidebar () {
-        if (this.$sidebar.showSidebar) {
-          this.$sidebar.displaySidebar(false)
-        }
+        this.$sidebar.displaySidebar(!this.$sidebar.showSidebar)
+      },
+      showSideBar() {
+        this.isShowSideBar = !this.isShowSideBar
       }
     }
   }

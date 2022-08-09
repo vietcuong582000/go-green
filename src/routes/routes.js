@@ -49,12 +49,12 @@ const routes = [
       },
       {
         path: 'typography',
-        name: 'Typography',
+        name: 'Danh sách đơn hàng',
         component: Typography
       },
       {
         path: 'icons',
-        name: 'Icons',
+        name: 'Danh mục sản phẩm',
         component: Icons
       },
       {

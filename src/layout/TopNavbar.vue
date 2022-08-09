@@ -1,6 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
+      <i class="nc-icon nc-bullet-list-67" style="cursor: pointer; margin-right: 10px" @click="toggleSidebar"></i>
       <a class="navbar-brand" href="#">Dashboard</a>
       <button type="button"
               class="navbar-toggler navbar-toggler-right"
@@ -89,10 +90,11 @@
       },
       toggleSidebar () {
         this.$sidebar.displaySidebar(!this.$sidebar.showSidebar)
+        this.$emit('toggle-sidebar')
       },
       hideSidebar () {
         this.$sidebar.displaySidebar(false)
-      }
+      },
     }
   }
 
