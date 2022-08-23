@@ -16,6 +16,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from './App.vue'
+import 'core-js'
 
 // LightBootstrap plugin
 import LightBootstrap from './light-bootstrap-main'
@@ -24,7 +25,6 @@ import LightBootstrap from './light-bootstrap-main'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import locale from 'element-ui/lib/locale/lang/vi';
-
 // router setup
 import routes from './routes/routes'
 
@@ -32,7 +32,7 @@ import './registerServiceWorker'
 // plugin setup
 Vue.use(VueRouter)
 Vue.use(LightBootstrap)
-Vue.use(ElementUI, { locale })
+Vue.use(ElementUI, { locale, size: 'medium' })
 
 // configure router
 const router = new VueRouter({
