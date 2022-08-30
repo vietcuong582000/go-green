@@ -1,6 +1,7 @@
 import DashboardLayout from '../layout/DashboardLayout.vue'
 import ClientViewLayout from '../layout/ClientViewLayout.vue'
 import ClientHome from '../pages/ClientHome.vue'
+import Login from '../pages/Login'
 // GeneralViews
 import NotFound from '../pages/NotFoundPage.vue'
 
@@ -26,6 +27,10 @@ const routes = [
         component: ClientHome
       },
     ]
+  },
+  {
+    path: '/login',
+    component: Login
   },
   {
     path: '/admin',

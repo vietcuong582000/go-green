@@ -21,6 +21,13 @@ import 'core-js'
 // LightBootstrap plugin
 import LightBootstrap from './light-bootstrap-main'
 
+// FontAwesome config
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faFacebookF, faGoogle, faTwitter } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+library.add(faFacebookF, faGoogle, faTwitter)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
 // ElementUI
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
@@ -46,6 +53,8 @@ const router = new VueRouter({
     }
   }
 })
+
+
 
 /* eslint-disable no-new */
 new Vue({

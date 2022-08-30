@@ -15,6 +15,11 @@
   "dependencies": {
     "@babel/core": "^7.18.10",
     "@babel/plugin-proposal-optional-chaining": "^7.18.9",
+    "@fortawesome/fontawesome-svg-core": "^6.1.2",
+    "@fortawesome/free-brands-svg-icons": "^6.1.2",
+    "@fortawesome/free-regular-svg-icons": "^6.1.2",
+    "@fortawesome/free-solid-svg-icons": "^6.1.2",
+    "@fortawesome/vue-fontawesome": "^2.0.8",
     "@vue/babel-preset-app": "^5.0.8",
     "@vue/cli-plugin-babel": "4.5.9",
     "bootstrap": "^4.3.1",

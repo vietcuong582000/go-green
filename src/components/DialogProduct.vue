@@ -20,18 +20,41 @@
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
             <el-form-item label="Đơn giá">
-<!--              <el-input v-model="form.productPrice" placeholder="Đơn giá"></el-input>-->
               <money-input
                 :value.sync="form.productPrice"
+                placeholder="Đơn giá"
                 :max-length="'15'"
                 :prop="'productPrice'"
                 :show-limit="true"
+                :clearable="false"
               />
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
             <el-form-item label="Số lượng">
               <el-input v-model="form.productQuantity" placeholder="Số lượng"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
+            <el-form-item label="Ngày nhập">
+              <el-date-picker
+                v-model="form.productImportDate"
+                type="date"
+                placeholder="Ngày nhập"
+                format="dd-MM-yyyy"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
+            <el-form-item label="Ngày hết hạn">
+              <el-date-picker
+                v-model="form.productExpirationDate"
+                type="date"
+                placeholder="Ngày hết hạn"
+                format="dd-MM-yyyy"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
@@ -126,5 +149,7 @@ const FORM_DEFAULT = {
   productPrice: '',
   productQuantity: '',
   productDescription: '',
+  productImportDate: '',
+  productExpirationDate: '',
 }
 </script>
