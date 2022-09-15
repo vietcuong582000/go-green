@@ -27,6 +27,7 @@
     "core-js": "^3.24.1",
     "currency.js": "^2.0.4",
     "element-ui": "^2.15.9",
+    "firebase-tools": "7.0.0",
     "google-maps": "^3.2.1",
     "register-service-worker": "^1.5.2",
     "v-tooltip": "^2.0.0-rc.33",

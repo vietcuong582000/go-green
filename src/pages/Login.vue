@@ -2,29 +2,33 @@
   <div class="background">
     <div class="container">
       <div class="header-login">
-        <h4 class="title-form">Sign in</h4>
+        <h4 class="title-form">Đăng nhập</h4>
         <div class="icon-container">
           <font-awesome-icon icon="fa-brands fa-facebook-f" inverse/>
           <font-awesome-icon icon="fa-brands fa-google" inverse/>
           <font-awesome-icon icon="fa-brands fa-twitter" inverse/>
         </div>
       </div>
-      <el-form ref="formLogin" :model="formLogin" class="form-login">
-        <el-input style="width: 95%" v-model="formLogin.account" placeholder="Account"></el-input>
-        <el-input style="width: 95%" v-model="formLogin.password" placeholder="Password"></el-input>
+      <el-form ref="formLogin" id="formLogin" :model="formLogin" :rules="ruleFormLogin" class="form-login">
+        <el-form-item style="width: 95%" label="" label-width="0" prop="account">
+          <el-input v-model="formLogin.account" placeholder="Tài khoản"></el-input>
+        </el-form-item>
+        <el-form-item style="width: 95%" label="" label-width="0" prop="password">
+          <el-input v-model="formLogin.password" placeholder="Password" show-password></el-input>
+        </el-form-item>
         <div class="remember-switch-container">
           <el-switch
             v-model="remember"
             active-color="#9665EEFF"
             inactive-color="#bbbbbb">
           </el-switch>
-          <span style="color: #9665EEFF">Remeber me</span>
+          <span style="color: #9665EEFF">Ghi nhớ đăng nhập</span>
         </div>
-        <button class="login-button">SIGN IN</button>
+        <button class="login-button" @click="signIn">Đăng nhập</button>
         <div class="sign-up-container">
-          Don't have an account?
+          Bạn chưa có tài khoản?
           <span class="sign-up-link">
-            Sign up
+            Đăng ký
           </span>
         </div>
       </el-form>
@@ -73,7 +77,6 @@
 .form-login {
   display: flex;
   flex-direction: column;
-  gap: 15px;
   align-items: center;
   margin-top: 160px;
 }
@@ -81,10 +84,11 @@
   display: flex;
   width: 95%;
   gap: 10px;
+  margin-top: 5px;
 }
 .login-button {
   width: 95%;
-  margin-top: 30px;
+  margin-top: 40px;
   background: #9665EEFF;
   border-radius: 8px;
   outline: none;
@@ -100,7 +104,7 @@
 .login-button:hover {
   background: #a57dee;
 }
-::v-deep .el-input.is-active .el-input__inner, .el-input__inner:focus {
+>>> .el-input__inner:focus{
   border-color: #a57dee;
   outline: 0;
 }
@@ -109,7 +113,7 @@
   text-align: center;
   color: #525252;
   font-size: 14px;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 .sign-up-link{
   color: #9665EEFF;
@@ -122,6 +126,8 @@
 </style>
 
 <script>
+import {requiredRule} from "@/utils/Validate";
+
 export default {
   data() {
     return {
@@ -129,7 +135,19 @@ export default {
         account: '',
         password: '',
       },
-      remember: ''
+      remember: '',
+      ruleFormLogin: {
+        account: [requiredRule('Tài khoản',['change', 'blur'])],
+        password: [requiredRule('Password',['change', 'blur'])],
+      }
+    }
+  },
+  methods: {
+    signIn() {
+      this.$refs.formLogin.validate(valid => {
+        if(!valid) return false
+      })
+      console.log('alo')
     }
   }
 }
