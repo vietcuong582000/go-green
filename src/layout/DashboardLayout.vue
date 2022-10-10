@@ -6,10 +6,10 @@
         <i class="nc-icon nc-chart-pie-35"></i>
         <p>Dashboard</p>
       </sidebar-link>
-      <sidebar-link to="/admin/user">
-        <i class="nc-icon nc-circle-09"></i>
-        <p>User Profile</p>
-      </sidebar-link>
+<!--      <sidebar-link to="/admin/user">-->
+<!--        <i class="nc-icon nc-circle-09"></i>-->
+<!--        <p>User Profile</p>-->
+<!--      </sidebar-link>-->
       <sidebar-link to="/admin/product-list">
         <i class="nc-icon nc-notes"></i>
         <p>Danh sách sản phẩm</p>
@@ -23,12 +23,12 @@
         <p>Danh mục sản phẩm</p>
       </sidebar-link>
       <sidebar-link to="/admin/maps">
-        <i class="nc-icon nc-pin-3"></i>
-        <p>Maps</p>
+        <i class="nc-icon nc-circle-09"></i>
+        <p>Danh sách khách hàng</p>
       </sidebar-link>
       <sidebar-link to="/admin/notifications">
-        <i class="nc-icon nc-bell-55"></i>
-        <p>Notifications</p>
+        <i class="nc-icon nc-chart-bar-32"></i>
+        <p>Thống kê</p>
       </sidebar-link>
 
 <!--      <template slot="bottom-links">-->
@@ -69,7 +69,7 @@
       return {
         isShowSideBar: true,
         fullWidth: '100%',
-        withSideBarWidth: 'calc(100% - 260px)'
+        withSideBarWidth: 'calc(100% - 275px)'
       }
     },
     computed: {

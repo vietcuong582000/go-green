@@ -19,10 +19,10 @@
         <div class="remember-switch-container">
           <el-switch
             v-model="remember"
-            active-color="#9665EEFF"
+            active-color="#29a974"
             inactive-color="#bbbbbb">
           </el-switch>
-          <span style="color: #9665EEFF">Ghi nhớ đăng nhập</span>
+          <span style="color: #29a974">Ghi nhớ đăng nhập</span>
         </div>
         <button class="login-button" @click="signIn">Đăng nhập</button>
         <div class="sign-up-container">
@@ -43,7 +43,7 @@
   align-items: center;
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(rgba(0, 72, 255, 0.5), rgba(154, 124, 252, 0.5)); ;
+  background-image: url('../../public/img/background-admin-2.jpg');
 }
 .container {
   width: 400px;
@@ -55,7 +55,7 @@
 .header-login {
   width: 92%;
   height: 140px;
-  background-color: rgb(150, 101, 238);
+  background-color: #29a974;
   border-radius: 10px;
   position: absolute;
   top: -20px;
@@ -89,7 +89,7 @@
 .login-button {
   width: 95%;
   margin-top: 40px;
-  background: #9665EEFF;
+  background: #29a974;
   border-radius: 8px;
   outline: none;
   border: none;
@@ -102,10 +102,10 @@
   box-shadow: 0px 15px 30px -15px rgba(82,82,82,0.5);
 }
 .login-button:hover {
-  background: #a57dee;
+  background: #33b47e;
 }
 >>> .el-input__inner:focus{
-  border-color: #a57dee;
+  border-color: #29a974;
   outline: 0;
 }
 .sign-up-container{
@@ -116,12 +116,12 @@
   margin-top: 20px;
 }
 .sign-up-link{
-  color: #9665EEFF;
+  color: #29a974;
   font-weight: bold;
   cursor: pointer;
 }
 .sign-up-link:hover{
-  color: #ae8bee;
+  color: #33b47e;
 }
 </style>
 
