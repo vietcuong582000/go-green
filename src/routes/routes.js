@@ -8,12 +8,15 @@ import NotFound from '../pages/NotFoundPage.vue'
 // Admin pages
 import Overview from 'src/pages/Overview.vue'
 import UserProfile from 'src/pages/UserProfile.vue'
-import TableList from 'src/pages/TableList.vue'
+import ProductList from '@/pages/Products/ProductList.vue'
 import Typography from 'src/pages/Typography.vue'
 import Icons from 'src/pages/Icons.vue'
 import Maps from 'src/pages/Maps.vue'
 import Notifications from 'src/pages/Notifications.vue'
 import Upgrade from 'src/pages/Upgrade.vue'
+import OrderList from "@/pages/Orders/OrderList";
+import CategoryList from "@/pages/Categories/CategoryList";
+import CustomerList from "@/pages/Customers/CustomerList";
 
 const routes = [
   {
@@ -50,17 +53,22 @@ const routes = [
       {
         path: 'product-list',
         name: 'Danh sách sản phẩm',
-        component: TableList
+        component: ProductList
       },
       {
-        path: 'typography',
+        path: 'order-list',
         name: 'Danh sách đơn hàng',
-        component: Typography
+        component: OrderList
       },
       {
-        path: 'icons',
+        path: 'category-list',
         name: 'Danh mục sản phẩm',
-        component: Icons
+        component: CategoryList
+      },
+      {
+        path: 'customer-list',
+        name: 'Danh sách khách hàng',
+        component: CustomerList
       },
       {
         path: 'maps',

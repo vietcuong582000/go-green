@@ -82,82 +82,87 @@
           @close-dialog="onCloseDialog"
         />
 
-<!--        <el-pagination-->
-<!--          :current-page.sync="currentPage"-->
-<!--          :layout="'total, sizes, prev, pager, next, jumper'"-->
-<!--          :page-size.sync="pageSize"-->
-<!--          :page-sizes="pageSizes"-->
-<!--          :total="total"-->
-<!--          @size-change="handleSizeChange"-->
-<!--          @current-change="handleCurrentChange"-->
-<!--        />-->
+        <!--        <el-pagination-->
+        <!--          :current-page.sync="currentPage"-->
+        <!--          :layout="'total, sizes, prev, pager, next, jumper'"-->
+        <!--          :page-size.sync="pageSize"-->
+        <!--          :page-sizes="pageSizes"-->
+        <!--          :total="total"-->
+        <!--          @size-change="handleSizeChange"-->
+        <!--          @current-change="handleCurrentChange"-->
+        <!--        />-->
       </el-card>
     </div>
   </div>
 </template>
+<style scoped>
+>>> .el-card__header {
+  font-size: 22px
+}
+</style>
 <script>
-  import LTable from 'src/components/Table.vue'
-  import Card from 'src/components/Cards/Card.vue'
-  import DialogProduct from "../components/DialogProduct";
-  import {FORM_MODE} from "../utils/Constant";
-  import {formatCurrency} from "../utils/Fomatter";
+import LTable from '@/components/Table.vue'
+import Card from '@/components/Cards/Card.vue'
+import DialogProduct from "./CustomerDialog";
+import {FORM_MODE} from "@/utils/Constant";
+import {formatCurrency} from "@/utils/Fomatter";
 
-  export default {
-    components: {
-      LTable,
-      Card,
-      DialogProduct
-    },
-    data () {
-      return {
-        productDetail: {},
-        dialogTitle: '',
-        isShowDialog: false,
-        FORM_MODE,
-        page: 1,
-        size: 20,
-        tableData: [{
-          productId: 'Apple01',
-          productName: 'Táo Niu Zee Lân',
-          productCategory: 'Trái cây',
-          productPrice: '30000',
-          productQuantity: '100',
-          productDescription: 'Táo nhập khẩu từ Niu Zee Lân',
-        }, {
-          productId: 'Grape01',
-          productName: 'Nho Mỹ (Đình)',
-          productCategory: 'Trái cây',
-          productPrice: '100000',
-          productQuantity: '200',
-          productDescription: 'Nho Mỹ nhập khẩu',
-        }, {
-          productId: 'Mango01',
-          productName: 'Xoài Úc',
-          productCategory: 'Trái cây',
-          productPrice: '40000',
-          productQuantity: '100',
-          productDescription: 'Xoài Úc nhập khẩu',
-        }]
+export default {
+  components: {
+    LTable,
+    Card,
+    DialogProduct
+  },
+  data () {
+    return {
+      productDetail: {},
+      dialogTitle: '',
+      isShowDialog: false,
+      FORM_MODE,
+      page: 1,
+      size: 20,
+      tableData: [{
+        productId: 'Apple01',
+        productName: 'Táo Niu Zee Lân',
+        productCategory: 'Trái cây',
+        productPrice: '30000',
+        productQuantity: '100',
+        productDescription: 'Táo nhập khẩu từ Niu Zee Lân',
+      }, {
+        productId: 'Grape01',
+        productName: 'Nho Mỹ (Đình)',
+        productCategory: 'Trái cây',
+        productPrice: '100000',
+        productQuantity: '200',
+        productDescription: 'Nho Mỹ nhập khẩu',
+      }, {
+        productId: 'Mango01',
+        productName: 'Xoài Úc',
+        productCategory: 'Trái cây',
+        productPrice: '40000',
+        productQuantity: '100',
+        productDescription: 'Xoài Úc nhập khẩu',
+      }]
+    }
+  },
+  methods: {
+    showDialog(formMode, row) {
+      this.isShowDialog = true
+      if(formMode === FORM_MODE.EDIT) {
+        this.productDetail = row
+        this.dialogTitle = `SỬA THÔNG TIN SẢN PHẨM`
+      } else {
+        this.dialogTitle = `THÊM MỚI SẢN PHẨM`
       }
     },
-    methods: {
-      showDialog(formMode, row) {
-        this.isShowDialog = true
-        if(formMode === FORM_MODE.EDIT) {
-          this.productDetail = row
-          this.dialogTitle = `SỬA THÔNG TIN SẢN PHẨM`
-        } else {
-          this.dialogTitle = `THÊM MỚI SẢN PHẨM`
-        }
-      },
-      onCloseDialog() {
-        this.productDetail = {}
-      },
-      formatCurrencyFunction(number) {
-        return formatCurrency(number)
-      }
+    onCloseDialog() {
+      this.productDetail = {}
+    },
+    formatCurrencyFunction(number) {
+      return formatCurrency(number)
     }
   }
+}
 </script>
 <style>
 </style>

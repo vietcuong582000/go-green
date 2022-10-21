@@ -31,6 +31,18 @@
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
+            <el-form-item label="Đơn vị tính">
+              <money-input
+                :value.sync="form.productPrice"
+                placeholder="Đơn giá"
+                :max-length="'15'"
+                :prop="'productPrice'"
+                :show-limit="true"
+                :clearable="false"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
             <el-form-item label="Số lượng">
               <el-input v-model="form.productQuantity" placeholder="Số lượng"></el-input>
             </el-form-item>
@@ -90,7 +102,7 @@
 </template>
 
 <script>
-import MoneyInput from "./Inputs/MoneyInput";
+import MoneyInput from "../../components/Inputs/MoneyInput";
 
 export default {
   components: {

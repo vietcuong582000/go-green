@@ -14,15 +14,15 @@
         <i class="nc-icon nc-notes"></i>
         <p>Danh sách sản phẩm</p>
       </sidebar-link>
-      <sidebar-link to="/admin/typography">
-        <i class="nc-icon nc-delivery-fast"></i>
-        <p>Danh sách đơn hàng</p>
-      </sidebar-link>
-      <sidebar-link to="/admin/icons">
+      <sidebar-link to="/admin/category-list">
         <i class="nc-icon nc-tag-content"></i>
         <p>Danh mục sản phẩm</p>
       </sidebar-link>
-      <sidebar-link to="/admin/maps">
+      <sidebar-link to="/admin/order-list">
+        <i class="nc-icon nc-delivery-fast"></i>
+        <p>Danh sách đơn hàng</p>
+      </sidebar-link>
+      <sidebar-link to="/admin/customer-list">
         <i class="nc-icon nc-circle-09"></i>
         <p>Danh sách khách hàng</p>
       </sidebar-link>
