@@ -17,7 +17,7 @@
           @click="clear()"
         />
       </span>
-      <span style="color: #909399">{{ vModel ? maxlengthSuffix : 0 }}/{{ maxLength }}</span>
+      <span style="color: #909399; font-size: 12px">{{ vModel ? maxlengthSuffix : 0 }}/{{ maxLength }}</span>
     </span>
   </el-input>
 </template>
@@ -57,11 +57,11 @@ export default {
   computed: {
     vModel: {
       get() {
-        if (this.value.indexOf('-') === 0) {
+        if (this.value.toString().indexOf('-') === 0) {
           return this.value === '-' ? this.value : this.value.replace('-', '').split(',').join('').split('')
             .reverse()?.join('').match(/.{1,3}/g)?.join().split('').concat('-').reverse().join('')
         }
-        return this.value.split(',')?.join('').split('').reverse()?.join('').match(/.{1,3}/g)?.join().split('').reverse()?.join('')
+        return this.value.toString().split(',')?.join('').split('').reverse()?.join('').match(/.{1,3}/g)?.join().split('').reverse()?.join('')
       },
       set(value) {
         value = value.split(',')?.join('')

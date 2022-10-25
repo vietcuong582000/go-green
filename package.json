@@ -30,6 +30,7 @@
     "element-ui": "^2.15.9",
     "firebase-tools": "7.0.0",
     "google-maps": "^3.2.1",
+    "md5": "2.0.0",
     "moment": "2.9.0",
     "register-service-worker": "^1.5.2",
     "v-tooltip": "^2.0.0-rc.33",

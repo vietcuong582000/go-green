@@ -1,4 +1,4 @@
-export const API_DEFAULT = 'http://localhost:8080/'
+export const API_DEFAULT = 'https://63565f85a2d1844a977321ca.mockapi.io/api'
 
 export const FORM_MODE = {
   DEFAULT: 0,
@@ -6,5 +6,5 @@ export const FORM_MODE = {
   EDIT: 2,
   VIEW: 3,
   APPROVE: 4,
-  REJECT: 5
+  DELETE: 5
 }

@@ -58,3 +58,5 @@ class ApiFactory {
     });
   }
 }
+
+export default ApiFactory;
