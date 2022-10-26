@@ -28,6 +28,7 @@
     "core-js": "^3.24.1",
     "currency.js": "^2.0.4",
     "element-ui": "^2.15.9",
+    "firebase": "6.2.0",
     "firebase-tools": "7.0.0",
     "google-maps": "^3.2.1",
     "md5": "2.0.0",

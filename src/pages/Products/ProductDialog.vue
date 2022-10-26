@@ -15,6 +15,7 @@
                 placeholder="Mã sản phẩm"
                 maxlength="50"
                 :show-word-limit="true"
+                :disabled="formMode === FORM_MODE.DELETE"
               />
             </el-form-item>
           </el-col>
@@ -25,6 +26,7 @@
                 placeholder="Tên sản phẩm"
                 maxlength="100"
                 :show-word-limit="true"
+                :disabled="formMode === FORM_MODE.DELETE"
               />
             </el-form-item>
           </el-col>
@@ -37,6 +39,8 @@
                 :prop="'productPrice'"
                 :show-limit="true"
                 :clearable="false"
+                :is-disable="formMode === FORM_MODE.DELETE"
+                @input.native="onChangeUnitPrice(); onValidatePrice()"
               />
             </el-form-item>
           </el-col>
@@ -46,6 +50,7 @@
                 v-model="form.unit"
                 placeholder="Đơn vị tính"
                 maxlength="10"
+                :disabled="formMode === FORM_MODE.DELETE"
                 :show-word-limit="true"
               />
             </el-form-item>
@@ -56,13 +61,14 @@
                 v-model="form.quantity"
                 placeholder="Số lượng"
                 maxlength="10"
+                :disabled="formMode === FORM_MODE.DELETE"
                 :show-word-limit="true"
               />
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
             <el-form-item label="Danh mục" prop="idCategory">
-              <el-select style="width: 100%" v-model="form.idCategory" placeholder="Danh mục">
+              <el-select style="width: 100%" :disabled="formMode === FORM_MODE.DELETE" v-model="form.idCategory" placeholder="Danh mục">
                 <el-option
                   v-for="item in listDanhMuc"
                   :key="item.value"
@@ -80,6 +86,7 @@
                 placeholder="Ngày nhập"
                 format="dd-MM-yyyy"
                 style="width: 100%"
+                :disabled="formMode === FORM_MODE.DELETE"
               />
             </el-form-item>
           </el-col>
@@ -91,6 +98,7 @@
                 placeholder="Ngày hết hạn"
                 format="dd-MM-yyyy"
                 style="width: 100%"
+                :disabled="formMode === FORM_MODE.DELETE"
               />
             </el-form-item>
           </el-col>
@@ -100,10 +108,11 @@
                 :value.sync="form.discountPrice"
                 placeholder="Đơn giá đã giảm"
                 :max-length="'15'"
-                :is-disable="isCheckedTiLe"
+                :is-disable="isCheckedTiLe || formMode === FORM_MODE.DELETE"
                 :prop="'productPrice'"
                 :show-limit="!isCheckedTiLe"
                 :clearable="false"
+                @input.native="onChangeDiscountPrice(); onValidatePrice()"
               />
             </el-form-item>
           </el-col>
@@ -112,7 +121,7 @@
               <el-input
                 v-model="form.discount"
                 placeholder="Tỉ lệ giảm giá"
-                :disabled="!isCheckedTiLe"
+                :disabled="!isCheckedTiLe || formMode === FORM_MODE.DELETE"
                 maxlength="2"
                 @input="onChangeDiscount"
               >
@@ -123,7 +132,8 @@
           <el-col :xl="6" :lg="6" :md="12" :sm="12" :xs="12">
             <el-form-item label="">
               <el-checkbox
-                v-model="isCheckedTiLe"
+                v-model="isCheckedTiLe || formMode === FORM_MODE.DELETE"
+                :disabled="formMode === FORM_MODE.DELETE"
                 @change="onChangeCheckbox"
               >
                 Giảm giá theo tỉ lệ
@@ -132,7 +142,7 @@
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
             <el-form-item label="Trạng thái" prop="status">
-              <el-select style="width: 100%" v-model="form.status" placeholder="Trạng thái">
+              <el-select style="width: 100%" :disabled="formMode === FORM_MODE.DELETE" v-model="form.status" placeholder="Trạng thái">
                 <el-option
                   v-for="item in listTrangThai"
                   :key="item.value"
@@ -150,8 +160,9 @@
                 type="textarea"
                 maxlength="225"
                 :show-word-limit="true"
-                :rows="3">
-              </el-input>
+                :rows="3"
+                :disabled="formMode === FORM_MODE.DELETE"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -159,10 +170,20 @@
     </el-card>
     <span slot="footer">
       <el-button
+        v-if="formMode === FORM_MODE.EDIT || formMode === FORM_MODE.CREATE"
         type="success"
-        @click="close"
+        :loading="isWaitingApi"
+        @click="onShowConfirm"
       >
         Lưu
+      </el-button>
+      <el-button
+        v-if="formMode === FORM_MODE.DELETE"
+        type="danger"
+        :loading="isWaitingApi"
+        @click="onShowConfirm"
+      >
+        Xóa
       </el-button>
       <el-button
         @click="close"
@@ -186,6 +207,8 @@ import MoneyInput from "../../components/Inputs/MoneyInput";
 import ApiFactory from '@/utils/apiFactory'
 import {FORM_MODE} from "@/utils/Constant";
 import {numberRule, requiredRule} from "@/utils/Validate";
+import {ConstantAPI} from "@/utils/ConstantAPI";
+import {errAlert, showAlert, SUCCESS} from "@/utils/Alert";
 
 const FUNCTION_CODE = 'PRODUCT'
 export default {
@@ -217,24 +240,24 @@ export default {
         productId: [requiredRule('Mã sản phẩm')],
         productName: [requiredRule('Tên sản phẩm')],
         idCategory: [requiredRule('Danh mục')],
-        unitPrice: [requiredRule('Đơn giá'), numberRule('Đơn giá')],
+        unitPrice: [requiredRule('Đơn giá'), numberRule('Đơn giá'), { validator: this.validateUnitPrice, trigger: ['change', 'blur'] }],
         unit: [requiredRule('Đơn vị tính')],
         quantity: [requiredRule('Số lượng'), numberRule('Số lượng')],
         description: [requiredRule('Mô tả')],
         importDate: [requiredRule('Ngày nhập')],
         expirationDate: [requiredRule('Ngày hết hạn')],
         discount: [numberRule('Tỉ lệ giảm giá')],
-        discountPrice: [numberRule('Đơn giá đã giảm')],
+        discountPrice: [numberRule('Đơn giá đã giảm'), { validator: this.validateDiscountPrice, trigger: ['change', 'blur'] }],
         status: [requiredRule('Trạng thái')]
       },
       isCheckedTiLe: true,
       listDanhMuc: [
         {
-          value: '1',
+          value: 'Trái cây',
           label: 'Trái cây'
         },
         {
-          value: '2',
+          value: 'Rau củ',
           label: 'Rau củ'
         }
       ],
@@ -248,7 +271,9 @@ export default {
           label: 'Không hoạt động'
         }
       ],
-      dialogVisible: false
+      dialogVisible: false,
+      isWaitingApi: false,
+      FORM_MODE
     };
   },
   watch: {
@@ -262,17 +287,94 @@ export default {
     }
   },
   methods: {
+    onShowConfirm() {
+      let message
+      let type
+      if (this.formMode === FORM_MODE.CREATE || this.formMode === FORM_MODE.EDIT) {
+        message = 'Bạn có chắc chắn muốn lưu dữ liệu?'
+        type = 'success'
+      } else if (this.formMode === FORM_MODE.DELETE) {
+        message = 'Bạn có chắc chắn muốn xóa dữ liệu?'
+        type = 'warning'
+      }
+      this.$refs.form.validate(valid => {
+        if (!valid) return false
+        this.$confirm(message, '', {
+          confirmButtonText: 'Có',
+          cancelButtonText: 'Không',
+          cancelButtonClass: 'el-icon-close',
+          confirmButtonClass: 'el-icon-check',
+          type: type
+        }).then(() => {
+          this.onSave()
+        }).catch(_ => {
+        })
+      })
+    },
+    onSave() {
+      let api
+      let alert
+      let payload
+      let param
+      switch (this.formMode) {
+        case FORM_MODE.CREATE:
+          api = ConstantAPI[FUNCTION_CODE].CREATE
+          alert = 'Thêm mới thành công sản phẩm: '
+          payload = this.form
+          param = ''
+          break
+        case FORM_MODE.EDIT:
+          api = ConstantAPI[FUNCTION_CODE].UPDATE
+          alert = 'Thay đổi thông tin thành công sản phẩm: '
+          payload = this.form
+          param = ''
+          break
+        case FORM_MODE.DELETE:
+          api = ConstantAPI[FUNCTION_CODE].DELETE
+          alert = 'Xóa thành công sản phẩm: '
+          payload = {}
+          param = this.form.id
+          break
+      }
+      this.isWaitingApi = true
+      ApiFactory.callAPI(api, payload, param).then(rs => {
+        showAlert(this, SUCCESS, alert + rs.productName)
+        this.close()
+        this.$emit('on-success')
+      }).catch(err => {
+        errAlert(this, 'Có lỗi xảy ra')
+      }).finally(() => {
+        this.isWaitingApi = false
+      })
+    },
     onChangeCheckbox() {
       this.form.discount = ''
       this.form.discountPrice = ''
     },
+    onChangeUnitPrice() {
+      if(this.isCheckedTiLe && this.form.discount) {
+        this.onChangeDiscount()
+      } else if (!this.isCheckedTiLe && this.form.discountPrice) {
+        this.onChangeDiscountPrice()
+      }
+    },
     onChangeDiscount() {
-      console.log(this.form.unitPrice)
       if(!this.isCheckedTiLe || !this.form.unitPrice) {
         return
       }
-      this.form.discountPrice = Math.round((this.form.unitPrice * this.form.discount) / 100)
-      console.log(this.form.discountPrice)
+      this.form.discountPrice = this.form.unitPrice - Math.round((this.form.unitPrice * this.form.discount) / 100)
+    },
+    onChangeDiscountPrice() {
+      if(this.isCheckedTiLe || !this.form.unitPrice) {
+        return
+      }
+      this.form.discount = 100 - Math.ceil((this.form.discountPrice / this.form.unitPrice) * 100)
+      if(this.form.discount >= 100 || this.form.discount < 0) {
+        this.form.discount = 0
+      }
+    },
+    onValidatePrice() {
+      this.$refs.form.validateField(['unitPrice', 'discountPrice'])
     },
     clearForm() {
       this.form = {...FORM_DEFAULT}
@@ -282,7 +384,21 @@ export default {
       this.clearForm()
       this.$emit('update:isShowDialog')
       this.$emit('close-dialog')
-    }
+    },
+    validateUnitPrice(rule, value, callback) {
+      if (Number(this.form.unitPrice) < Number(this.form.discountPrice)) {
+        callback(new Error(`Đơn giá không được nhỏ hơn Đơn giá đã giảm`))
+      } else {
+        callback()
+      }
+    },
+    validateDiscountPrice(rule, value, callback) {
+      if (Number(this.form.unitPrice) < Number(this.form.discountPrice)) {
+        callback(new Error(`Đơn giá đã giảm không được lớn hơn Đơn giá`))
+      } else {
+        callback()
+      }
+    },
   }
 };
 const FORM_DEFAULT = {

@@ -141,8 +141,9 @@
           :title="dialogTitle"
           :form-mode="formMode"
           @close-dialog="onCloseDialog"
+          @on-success="getListProduct"
         />
-
+        <div style="height: 20px"></div>
         <el-pagination
           :current-page.sync="currentPage"
           :layout="'total, sizes, prev, pager, next, jumper'"
@@ -194,18 +195,21 @@
       }
     },
     mounted() {
-      this.isLoadingTable = true
-      ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, {}).then(rs => {
-        this.tableDataAll = rs
-        this.handleCurrentChange(1)
-        this.pageSize = 10
-        this.total = rs.length
-        this.isLoadingTable = false
-      }).catch(err => {
-        errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')
-      })
+      this.getListProduct()
     },
     methods: {
+      getListProduct() {
+        this.isLoadingTable = true
+        ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, '').then(rs => {
+          this.tableDataAll = rs
+          this.handleCurrentChange(1)
+          this.pageSize = 10
+          this.total = rs.length
+          this.isLoadingTable = false
+        }).catch(err => {
+          errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')
+        })
+      },
       showDialog(formMode, row) {
         this.isShowDialog = true
         this.formMode = formMode

@@ -40,7 +40,7 @@ class ApiFactory {
    * @param pToken: ACCESS_TOKEN
    * */
   static callAPI(constantApi, payload = {}, params = {}, pToken = undefined) {
-    const url = `${constantApi.url}?${objectToParams(params)}`;
+    const url = `${constantApi.url}/${params}`;
     const method = constantApi.method;
     const headers = getHeader()
     if (pToken) {
