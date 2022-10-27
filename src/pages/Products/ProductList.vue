@@ -42,7 +42,7 @@
             width="150"
           >
             <template slot-scope="{row}">
-              <img :src="row.imgUrl"  alt="" style="width: 50px; height: 50px"/>
+              <img :src="row.imgUrl"  alt="" style="max-width: 150px; height: 50px"/>
             </template>
           </el-table-column>
           <el-table-column

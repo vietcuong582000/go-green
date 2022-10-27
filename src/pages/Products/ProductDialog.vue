@@ -3,6 +3,7 @@
     :title="title"
     :visible.sync="isShowDialog"
     width="90%"
+    :top="'5vh'"
     :close-on-click-modal="false"
     @close="close">
     <el-card shadow="never">
@@ -116,7 +117,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :xl="6" :lg="6" :md="12" :sm="12" :xs="12">
+          <el-col :xl="7" :lg="7" :md="12" :sm="12" :xs="12">
             <el-form-item label="Tỉ lệ giảm giá" prop="discount">
               <el-input
                 v-model="form.discount"
@@ -129,8 +130,8 @@
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :xl="6" :lg="6" :md="12" :sm="12" :xs="12">
-            <el-form-item label="">
+          <el-col :xl="5" :lg="5" :md="12" :sm="12" :xs="12">
+            <el-form-item label="" label-width="0">
               <el-checkbox
                 v-model="isCheckedTiLe || formMode === FORM_MODE.DELETE"
                 :disabled="formMode === FORM_MODE.DELETE"
@@ -150,6 +151,18 @@
                   :value="item.value">
                 </el-option>
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
+            <el-form-item label="Ảnh sản phẩm" prop="imgUrl">
+              <div style="display: flex">
+                <img v-if="imgUrl" style="height: 100px; margin-right: 20px" :src="imgUrl" alt="" />
+                <span v-else class="image-placeholder"></span>
+                <label v-if="formMode !== FORM_MODE.DELETE" for="img-upload" class="custom-file-upload">
+                  <i class="el-icon-upload" style="margin-right: 10px" />Tải lên ảnh
+                </label>
+                <input type="file" id="img-upload" class="input-file-button" accept="image/png, image/jpeg" @change="onChangeImg" />
+              </div>
             </el-form-item>
           </el-col>
           <el-col :xl="24" :lg="24" :md="24" :sm="24" :xs="24">
@@ -194,6 +207,48 @@
   </el-dialog>
 </template>
 <style scoped>
+.image-placeholder {
+  height: 100px;
+  width: 100px;
+  margin-right: 20px;
+  border: dashed 2px #C0C4CC;
+  display: inline-block
+}
+
+.input-file-button {
+  display: none;
+  align-self: center
+}
+
+.custom-file-upload {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #FFF;
+  border: 1px solid #DCDFE6;
+  color: #606266;
+  -webkit-appearance: none;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  outline: 0;
+  margin: 0;
+  -webkit-transition: .1s;
+  transition: .1s;
+  font-weight: 500;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  align-self: center
+}
+
+.custom-file-upload:hover {
+  color: #409EFF;
+  border-color: #c6e2ff;
+  background-color: #ecf5ff;
+}
+
 >>> .el-textarea .el-input__count {
   bottom: -20px;
   line-height: 20px;
@@ -209,6 +264,7 @@ import {FORM_MODE} from "@/utils/Constant";
 import {numberRule, requiredRule} from "@/utils/Validate";
 import {ConstantAPI} from "@/utils/ConstantAPI";
 import {errAlert, showAlert, SUCCESS} from "@/utils/Alert";
+import storage from "@/firebase/firebase";
 
 const FUNCTION_CODE = 'PRODUCT'
 export default {
@@ -248,7 +304,7 @@ export default {
         expirationDate: [requiredRule('Ngày hết hạn')],
         discount: [numberRule('Tỉ lệ giảm giá')],
         discountPrice: [numberRule('Đơn giá đã giảm'), { validator: this.validateDiscountPrice, trigger: ['change', 'blur'] }],
-        status: [requiredRule('Trạng thái')]
+        status: [requiredRule('Trạng thái')],
       },
       isCheckedTiLe: true,
       listDanhMuc: [
@@ -271,6 +327,8 @@ export default {
           label: 'Không hoạt động'
         }
       ],
+      imgUrl: '',
+      file: null,
       dialogVisible: false,
       isWaitingApi: false,
       FORM_MODE
@@ -282,6 +340,7 @@ export default {
       handler(val) {
         if (this.formMode !== FORM_MODE.CREATE && val) {
           this.form = { ...this.detail }
+          this.imgUrl = this.form.imgUrl
         }
       }
     }
@@ -311,7 +370,7 @@ export default {
         })
       })
     },
-    onSave() {
+    async onSave() {
       let api
       let alert
       let payload
@@ -327,7 +386,7 @@ export default {
           api = ConstantAPI[FUNCTION_CODE].UPDATE
           alert = 'Thay đổi thông tin thành công sản phẩm: '
           payload = this.form
-          param = ''
+          param = this.form.id
           break
         case FORM_MODE.DELETE:
           api = ConstantAPI[FUNCTION_CODE].DELETE
@@ -337,6 +396,13 @@ export default {
           break
       }
       this.isWaitingApi = true
+      if(this.file) {
+        const path = `/images/${this.file.name}`;
+        const ref = storage.ref(path)
+        await ref.put(this.file);
+        this.form.imgUrl = await ref.getDownloadURL();
+        this.file = null
+      }
       ApiFactory.callAPI(api, payload, param).then(rs => {
         showAlert(this, SUCCESS, alert + rs.productName)
         this.close()
@@ -373,12 +439,18 @@ export default {
         this.form.discount = 0
       }
     },
+    async onChangeImg(e) {
+      this.file = e.target.files[0]
+      this.imgUrl = URL.createObjectURL(this.file)
+    },
     onValidatePrice() {
       this.$refs.form.validateField(['unitPrice', 'discountPrice'])
     },
     clearForm() {
       this.form = {...FORM_DEFAULT}
       this.$refs.form.resetFields()
+      this.imgUrl = ''
+      this.file = null
     },
     close() {
       this.clearForm()
@@ -413,6 +485,7 @@ const FORM_DEFAULT = {
   expirationDate: new Date(),
   discount: '',
   discountPrice: '',
-  status: '0'
+  status: '0',
+  imgUrl: ''
 }
 </script>
