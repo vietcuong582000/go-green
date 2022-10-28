@@ -15,12 +15,12 @@
           <el-menu-item index="2-1">Trái cây</el-menu-item>
           <el-menu-item index="2-2">Giỏ trái cây</el-menu-item>
           <el-menu-item index="2-3">Sản phẩm từ trái cây</el-menu-item>
-          <!--          <el-submenu index="2-4">-->
-          <!--            <template slot="title">Giỏ hàng</template>-->
-          <!--            <el-menu-item index="2-4-1">item one</el-menu-item>-->
-          <!--            <el-menu-item index="2-4-2">item two</el-menu-item>-->
-          <!--            <el-menu-item index="2-4-3">item three</el-menu-item>-->
-          <!--          </el-submenu>-->
+<!--          <el-submenu index="2-4">-->
+<!--            <template slot="title">Giỏ hàng</template>-->
+<!--            <el-menu-item index="2-4-1">item one</el-menu-item>-->
+<!--            <el-menu-item index="2-4-2">item two</el-menu-item>-->
+<!--            <el-menu-item index="2-4-3">item three</el-menu-item>-->
+<!--          </el-submenu>-->
         </el-submenu>
         <el-menu-item index="4"><a target="_blank">Giỏ hàng</a></el-menu-item>
         <el-menu-item index="5"><a target="_blank">Đơn hàng</a></el-menu-item>
@@ -31,7 +31,7 @@
     </div>
     <div class="container-home">
       <div class="main-content">
-        <router-view></router-view>
+<!--        <router-view></router-view>-->
       </div>
     </div>
     <div class="footer-home">
@@ -42,7 +42,7 @@
             <div>Địa chỉ: Dương Quàng Hàm, Quan Hoa, Cầu Giấy, Hà Nội</div>
             <div>Design and code by Cường DV with ❤</div>
             <div>
-              <img style="height: 55px" src="../../public/img/congthuong.png" alt="" />
+              <img style="height: 55px" src="../../../public/img/congthuong.png" alt=""/>
             </div>
           </el-col>
           <el-col :span="12">
@@ -52,14 +52,14 @@
             </div>
             <div class="logo-container">
               <span>Kết nối với chúng tôi qua: </span>
-              <img style="height: 30px;cursor: pointer" src="../../public/img/facebook.png" alt=""/>
+              <img style="height: 30px;cursor: pointer" src="../../../public/img/facebook.png" alt=""/>
             </div>
             <div>
               <span>Hình thức thanh toán:</span>
               <div class="logo-container">
-                <img style="height: 30px" src="../../public/img/vnpay2.jpg" alt=""/>
-                <img style="height: 30px" src="../../public/img/momo.png" alt=""/>
-                <img style="height: 30px" src="../../public/img/visa.png" alt=""/>
+                <img style="height: 30px" src="../../../public/img/vnpay2.jpg" alt=""/>
+                <img style="height: 30px" src="../../../public/img/momo.png" alt=""/>
+                <img style="height: 30px" src="../../../public/img/visa.png" alt=""/>
               </div>
             </div>
           </el-col>
@@ -72,7 +72,7 @@
 <style scoped>
 .background {
   min-height: 75vh;
-  background-image: url('../../public/img/background-home-4.jpg');
+  /*background-image: url('../../../public/img/background-home-4.jpg');*/
   background-color: #d3d3d3;
   background-size: cover;
   background-repeat: no-repeat;

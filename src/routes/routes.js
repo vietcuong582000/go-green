@@ -1,6 +1,6 @@
 import DashboardLayout from '../layout/DashboardLayout.vue'
 import ClientViewLayout from '../layout/ClientViewLayout.vue'
-import ClientHome from '../pages/ClientHome.vue'
+import ClientHome from '../pages/Client/ClientContainer.vue'
 import Login from '../pages/Login'
 // GeneralViews
 import NotFound from '../pages/NotFoundPage.vue'
@@ -17,6 +17,7 @@ import Upgrade from 'src/pages/Upgrade.vue'
 import OrderList from "@/pages/Orders/OrderList";
 import CategoryList from "@/pages/Categories/CategoryList";
 import CustomerList from "@/pages/Customers/CustomerList";
+import Home from "@/pages/Client/Home";
 
 const routes = [
   {
@@ -27,7 +28,7 @@ const routes = [
       {
         path: 'home',
         name: 'Home',
-        component: ClientHome
+        component: Home
       },
     ]
   },
@@ -38,10 +39,10 @@ const routes = [
   {
     path: '/admin',
     component: DashboardLayout,
-    redirect: '/admin/overview',
+    redirect: '/login',
     children: [
       {
-        path: 'overview',
+        path: 'dashboard',
         name: 'Overview',
         component: Overview
       },

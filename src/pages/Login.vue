@@ -24,7 +24,7 @@
           </el-switch>
           <span style="color: #29a974">Ghi nhớ đăng nhập</span>
         </div>
-        <button class="login-button" @click="signIn">Đăng nhập</button>
+        <el-button :loading="isSigningIn" class="login-button" @click="signIn">Đăng nhập</el-button>
         <div class="sign-up-container">
           Bạn chưa có tài khoản?
           <span class="sign-up-link">
@@ -139,15 +139,20 @@ export default {
       ruleFormLogin: {
         account: [requiredRule('Tài khoản',['change', 'blur'])],
         password: [requiredRule('Password',['change', 'blur'])],
-      }
+      },
+      isSigningIn: false
     }
   },
   methods: {
     signIn() {
       this.$refs.formLogin.validate(valid => {
         if(!valid) return false
+        this.isSigningIn = true
+        setTimeout(() => {
+          this.$router.push('/admin/dashboard')
+          this.isSigningIn = false
+        }, 3000)
       })
-      console.log('alo')
     }
   }
 }
