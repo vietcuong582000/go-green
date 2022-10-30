@@ -91,17 +91,17 @@
 }
 .container-home {
   position: relative;
-  min-height: 150vh;
+  min-height: 50vh;
   background-color: #d5f5e9;
+  padding-bottom: 30px;
+  padding-top: 30px;
 }
 .main-content {
-  height: 150vh;
+  min-height: 50vh;
   width: 95%;
-  margin: auto;
   background-color: #ffffff;
   border-radius: 10px;
-  position: absolute;
-  top: -100px;
+  margin: auto;
   left: 2.5%;
   padding: 20px;
 }

@@ -91,7 +91,7 @@
 }
 .container-home {
   position: relative;
-  min-height: 150vh;
+  min-height: 10vh;
   background-color: #d5f5e9;
 }
 .main-content {

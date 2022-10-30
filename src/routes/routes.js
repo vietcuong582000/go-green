@@ -18,6 +18,7 @@ import OrderList from "@/pages/Orders/OrderList";
 import CategoryList from "@/pages/Categories/CategoryList";
 import CustomerList from "@/pages/Customers/CustomerList";
 import Home from "@/pages/Client/Home";
+import ProductDetail from "@/pages/Client/ProductDetail";
 
 const routes = [
   {
@@ -30,6 +31,12 @@ const routes = [
         name: 'Home',
         component: Home
       },
+      {
+        path: 'product',
+        component: ProductDetail,
+        name: 'product',
+        props: true
+      }
     ]
   },
   {
