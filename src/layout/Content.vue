@@ -4,7 +4,11 @@
   </transition>
 </template>
 <script>
-  export default {}
+  export default {
+    metaInfo: {
+      title: 'Quản lý sản phẩm',
+    },
+  }
 </script>
 <style>
   .fade-enter-active,

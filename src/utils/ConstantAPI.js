@@ -19,6 +19,24 @@ export const ConstantAPI = {
       method: 'DELETE'
     }
   },
+  'CATEGORY': {
+    CREATE: {
+      url: `${API_DEFAULT}/category`,
+      method: 'POST'
+    },
+    GET: {
+      url: `${API_DEFAULT}/category`,
+      method: 'GET'
+    },
+    UPDATE: {
+      url: `${API_DEFAULT}/category`,
+      method: 'PUT'
+    },
+    DELETE: {
+      url: `${API_DEFAULT}/category`,
+      method: 'DELETE'
+    }
+  },
   'ORDER': {
     CREATE: {
       url: `${API_DEFAULT}/order/create`,

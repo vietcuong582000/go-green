@@ -17,6 +17,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from './App.vue'
 import 'core-js'
+import firebase from "firebase"
 
 // LightBootstrap plugin
 import LightBootstrap from './light-bootstrap-main'
@@ -54,6 +55,20 @@ const router = new VueRouter({
   }
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.authRequired)) {
+    if (firebase.auth().currentUser) {
+      next();
+    } else {
+      alert('Trang này chỉ dành cho tài khoản quản trị viên');
+      next({
+        path: '/login',
+      });
+    }
+  } else {
+    next();
+  }
+});
 
 
 /* eslint-disable no-new */

@@ -1,5 +1,6 @@
 <template>
   <div class="content">
+    <vue-title title="GoGreen - Quản lý sản phẩm"></vue-title>
     <div class="container-fluid">
       <el-card :header="'DANH SÁCH SẢN PHẨM'">
         <el-button type="success" style="margin-bottom: 20px; outline: none" icon="el-icon-plus" @click="showDialog(FORM_MODE.CREATE)">
@@ -171,12 +172,14 @@
   import ApiFactory from "@/utils/apiFactory";
   import {ConstantAPI} from "@/utils/ConstantAPI";
   import {errAlert} from "@/utils/Alert";
+  import VueTitle from '@/components/VueTitle'
   const FUNCTION_CODE = 'PRODUCT'
   export default {
     components: {
       LTable,
       Card,
-      DialogProduct
+      DialogProduct,
+      VueTitle
     },
     data () {
       return {

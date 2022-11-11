@@ -1,7 +1,7 @@
 import DashboardLayout from '../layout/DashboardLayout.vue'
 import ClientViewLayout from '../layout/ClientViewLayout.vue'
-import ClientHome from '../pages/Client/ClientContainer.vue'
 import Login from '../pages/Login'
+import firebase from "firebase"
 // GeneralViews
 import NotFound from '../pages/NotFoundPage.vue'
 
@@ -19,6 +19,7 @@ import CategoryList from "@/pages/Categories/CategoryList";
 import CustomerList from "@/pages/Customers/CustomerList";
 import Home from "@/pages/Client/Home";
 import ProductDetail from "@/pages/Client/ProductDetail";
+import VueRouter from 'vue-router'
 
 const routes = [
   {
@@ -46,52 +47,61 @@ const routes = [
   {
     path: '/admin',
     component: DashboardLayout,
-    redirect: '/login',
+    redirect: '/admin/dashboard',
     children: [
       {
         path: 'dashboard',
         name: 'Overview',
-        component: Overview
+        component: Overview,
+        meta: { authRequired: true }
       },
       {
         path: 'user',
         name: 'User',
-        component: UserProfile
+        component: UserProfile,
+        meta: { authRequired: true }
       },
       {
         path: 'product-list',
         name: 'Danh sách sản phẩm',
-        component: ProductList
+        component: ProductList,
+        meta: { authRequired: true }
       },
       {
         path: 'order-list',
         name: 'Danh sách đơn hàng',
-        component: OrderList
+        component: OrderList,
+        meta: { authRequired: true }
       },
       {
         path: 'category-list',
         name: 'Danh mục sản phẩm',
-        component: CategoryList
+        component: CategoryList,
+        meta: { authRequired: true }
       },
       {
         path: 'customer-list',
         name: 'Danh sách khách hàng',
-        component: CustomerList
+        component: CustomerList,
+        meta: { authRequired: true }
       },
       {
         path: 'maps',
         name: 'Maps',
-        component: Maps
+        component: Maps,
+        meta: { authRequired: true }
       },
       {
         path: 'notifications',
         name: 'Notifications',
-        component: Notifications
+        component: Notifications,
+        meta: { authRequired: true }
       },
       {
         path: 'upgrade',
         name: 'Upgrade to PRO',
-        component: Upgrade
+        component: Upgrade,
+        meta: { authRequired: true }
       }
     ]
   },

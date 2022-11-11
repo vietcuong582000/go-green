@@ -66,6 +66,8 @@
   </nav>
 </template>
 <script>
+  import firebase from "firebase";
+
   export default {
     computed: {
       routeName () {
@@ -103,10 +105,15 @@
           confirmButtonClass: 'el-icon-check',
           type: 'warning'
         }).then(() => {
-          setTimeout(() => {
-            this.$router.push('/login')
-          },1000)
-        }).catch(_ => {
+            firebase
+              .auth()
+              .signOut()
+              .then((rs) => {
+                console.log('Successfully logged out');
+                this.$router.push('/login');
+              })
+        }).catch(error => {
+          alert(error.message);
         })
       }
     }

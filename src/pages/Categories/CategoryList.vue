@@ -1,9 +1,10 @@
 <template>
   <div class="content">
+    <vue-title title="GoGreen - Danh mục sản phẩm"></vue-title>
     <div class="container-fluid">
-      <el-card :header="'Danh sách sản phẩm'">
+      <el-card :header="'DANH MỤC SẢN PHẨM'">
         <el-button type="success" style="margin-bottom: 20px; outline: none" icon="el-icon-plus" @click="showDialog(FORM_MODE.CREATE)">
-          Thêm mới sản phẩm
+          Thêm mới danh mục
         </el-button>
         <el-table
           :data="tableData"
@@ -13,50 +14,27 @@
           <el-table-column
             prop="stt"
             label="STT"
-            width="75"
+            width="50"
             header-align="center"
             align="center"
             type="index"
-            :index="(i) => {return ((page >= 1 ? page - 1 : 0) * size) + i + 1}">
-          </el-table-column>
+            :index="(i) => {return ((currentPage >= 1 ? currentPage - 1 : 0) * pageSize) + i + 1}"/>
           <el-table-column
-            prop="productId"
-            label="Mã sản phẩm"
+            prop="code"
+            label="Mã danh mục"
             header-align="center"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            prop="productName"
-            label="Tên sản phẩm"
-            header-align="center"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            prop="productCategory"
-            label="Danh mục"
-            header-align="center">
-          </el-table-column>
-          <el-table-column
-            prop="productPrice"
-            label="Đơn giá"
-            header-align="center"
-            :formatter="(row, col, val) => formatCurrencyFunction(val)"
           >
           </el-table-column>
           <el-table-column
-            prop="productQuantity"
-            label="Số lượng"
-            header-align="center">
-          </el-table-column>
-          <el-table-column
-            prop="productDescription"
-            label="Mô tả"
-            header-align="center">
+            prop="name"
+            label="Tên danh mục"
+            header-align="center"
+          >
           </el-table-column>
           <el-table-column
             label="Thao tác"
             header-align="center"
-            width="100"
+            width="200"
             align="center"
           >
             <template slot-scope="{row}">
@@ -72,6 +50,18 @@
                 >
                 </el-button>
               </el-tooltip>
+              <el-tooltip :content="'Xóa'" :open-delay="200" placement="top" effect="light">
+                <el-button
+                  type="danger"
+                  size="small"
+                  style="outline: none"
+                  icon="el-icon-delete"
+                  circle
+                  plain
+                  @click="showDialog(FORM_MODE.DELETE, row)"
+                >
+                </el-button>
+              </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
@@ -79,25 +69,28 @@
           :is-show-dialog.sync="isShowDialog"
           :detail.sync="productDetail"
           :title="dialogTitle"
+          :form-mode="formMode"
           @close-dialog="onCloseDialog"
+          @on-success="getListCategory"
         />
 
-        <!--        <el-pagination-->
-        <!--          :current-page.sync="currentPage"-->
-        <!--          :layout="'total, sizes, prev, pager, next, jumper'"-->
-        <!--          :page-size.sync="pageSize"-->
-        <!--          :page-sizes="pageSizes"-->
-        <!--          :total="total"-->
-        <!--          @size-change="handleSizeChange"-->
-        <!--          @current-change="handleCurrentChange"-->
-        <!--        />-->
+        <div style="height: 20px"></div>
+        <el-pagination
+          :current-page.sync="currentPage"
+          :layout="'total, sizes, prev, pager, next, jumper'"
+          :page-size.sync="pageSize"
+          :page-sizes="pageSizes"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </el-card>
     </div>
   </div>
 </template>
 <style scoped>
 >>> .el-card__header {
-  font-size: 22px
+  font-size: 20px
 }
 </style>
 <script>
@@ -106,12 +99,18 @@ import Card from '@/components/Cards/Card.vue'
 import DialogProduct from "./CategoryDialog";
 import {FORM_MODE} from "@/utils/Constant";
 import {formatCurrency} from "@/utils/Fomatter";
+import VueTitle from "@/components/VueTitle";
+import ApiFactory from "@/utils/apiFactory";
+import {ConstantAPI} from "@/utils/ConstantAPI";
+import {errAlert} from "@/utils/Alert";
 
+const FUNCTION_CODE = 'CATEGORY'
 export default {
   components: {
     LTable,
     Card,
-    DialogProduct
+    DialogProduct,
+    VueTitle
   },
   data () {
     return {
@@ -119,44 +118,59 @@ export default {
       dialogTitle: '',
       isShowDialog: false,
       FORM_MODE,
-      page: 1,
-      size: 20,
-      tableData: [{
-        productId: 'Apple01',
-        productName: 'Táo Niu Zee Lân',
-        productCategory: 'Trái cây',
-        productPrice: '30000',
-        productQuantity: '100',
-        productDescription: 'Táo nhập khẩu từ Niu Zee Lân',
-      }, {
-        productId: 'Grape01',
-        productName: 'Nho Mỹ (Đình)',
-        productCategory: 'Trái cây',
-        productPrice: '100000',
-        productQuantity: '200',
-        productDescription: 'Nho Mỹ nhập khẩu',
-      }, {
-        productId: 'Mango01',
-        productName: 'Xoài Úc',
-        productCategory: 'Trái cây',
-        productPrice: '40000',
-        productQuantity: '100',
-        productDescription: 'Xoài Úc nhập khẩu',
-      }]
+      currentPage: 1,
+      pageSize: 10,
+      pageSizes: [5, 10, 20, 50, 100],
+      total: 0,
+      tableData: [],
+      tableDataAll: [],
+      isLoadingTable: true,
+      formMode: null
     }
   },
+  mounted() {
+    this.getListCategory()
+  },
   methods: {
+    getListCategory() {
+      this.isLoadingTable = true
+      ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, '').then(rs => {
+        this.tableDataAll = rs
+        this.handleCurrentChange(1)
+        this.pageSize = 10
+        this.total = rs.length
+        this.isLoadingTable = false
+      }).catch(err => {
+        errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')
+      })
+    },
     showDialog(formMode, row) {
       this.isShowDialog = true
-      if(formMode === FORM_MODE.EDIT) {
-        this.productDetail = row
-        this.dialogTitle = `SỬA THÔNG TIN SẢN PHẨM`
-      } else {
-        this.dialogTitle = `THÊM MỚI SẢN PHẨM`
+      this.formMode = formMode
+      this.productDetail = {...row}
+      switch (formMode) {
+        case FORM_MODE.CREATE:
+          this.dialogTitle = 'THÊM MỚI DANH MỤC'
+          break
+        case FORM_MODE.EDIT:
+          this.dialogTitle = 'SỬA THÔNG TIN DANH MỤC'
+          break
+        case FORM_MODE.DELETE:
+          this.dialogTitle = 'XÓA DANH MỤC'
+          break
       }
     },
     onCloseDialog() {
       this.productDetail = {}
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.tableData = this.tableDataAll.slice((val-1) * this.pageSize, (val-1) * this.pageSize + this.pageSize)
+      scrollTo(0, 800)
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.handleCurrentChange(1)
     },
     formatCurrencyFunction(number) {
       return formatCurrency(number)

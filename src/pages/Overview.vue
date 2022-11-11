@@ -1,5 +1,6 @@
 <template>
   <div class="content">
+    <vue-title title="GoGreen - Dashboard"></vue-title>
     <div class="container-fluid">
       <div class="row">
         <div class="col-xl-3 col-md-6">
@@ -172,11 +173,13 @@
 <script>
   import StatsCard from 'src/components/Cards/StatsCard.vue'
   import LTable from 'src/components/Table.vue'
+  import VueTitle from "@/components/VueTitle";
 
   export default {
     components: {
       LTable,
-      StatsCard
+      StatsCard,
+      VueTitle
     },
     data () {
       return {

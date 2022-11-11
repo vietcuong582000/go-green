@@ -1,12 +1,13 @@
 <template>
   <div class="background">
+    <vue-title title="GoGreen - Đăng nhập"></vue-title>
     <div class="container">
       <div class="header-login">
         <h4 class="title-form">Đăng nhập</h4>
         <div class="icon-container">
-          <font-awesome-icon icon="fa-brands fa-facebook-f" inverse/>
-          <font-awesome-icon icon="fa-brands fa-google" inverse/>
-          <font-awesome-icon icon="fa-brands fa-twitter" inverse/>
+          <font-awesome-icon icon="fa-brands fa-facebook-f" inverse style="cursor: pointer" @click="signInWithFacebook"/>
+          <font-awesome-icon icon="fa-brands fa-google" inverse style="cursor: pointer" @click="signInWithGmail"/>
+          <font-awesome-icon icon="fa-brands fa-twitter" inverse style="cursor: pointer"/>
         </div>
       </div>
       <el-form ref="formLogin" id="formLogin" :model="formLogin" :rules="ruleFormLogin" class="form-login">
@@ -27,7 +28,7 @@
         <el-button :loading="isSigningIn" class="login-button" @click="signIn">Đăng nhập</el-button>
         <div class="sign-up-container">
           Bạn chưa có tài khoản?
-          <span class="sign-up-link">
+          <span class="sign-up-link" @click="signUp">
             Đăng ký
           </span>
         </div>
@@ -43,7 +44,7 @@
   align-items: center;
   width: 100vw;
   height: 100vh;
-  background-image: url('../../public/img/background-admin-2.jpg');
+  /*background-image: url('../../public/img/background-admin-2.jpg');*/
 }
 .container {
   width: 400px;
@@ -127,8 +128,14 @@
 
 <script>
 import {requiredRule} from "@/utils/Validate";
+import firebase from 'firebase'
+import VueTitle from "@/components/VueTitle";
+import {errAlert} from "@/utils/Alert";
 
 export default {
+  components: {
+    VueTitle
+  },
   data() {
     return {
       formLogin: {
@@ -153,6 +160,41 @@ export default {
           this.isSigningIn = false
         }, 3000)
       })
+    },
+    signInWithGmail() {
+      this.isSigningIn = true
+      let provider = new firebase.auth.GoogleAuthProvider()
+      firebase.auth().signInWithPopup(provider).then((result) => {
+        this.$router.push('/admin/dashboard')
+        this.isSigningIn = false
+      }).catch((err) => {
+        console.log(err)
+        this.isSigningIn = false
+      });
+    },
+    signInWithFacebook() {
+      this.isSigningIn = true
+      let provider = new firebase.auth.FacebookAuthProvider()
+      firebase.auth().signInWithPopup(provider).then((result) => {
+        this.$router.push('/admin/dashboard')
+        this.isSigningIn = false
+      }).catch((err) => {
+        console.log(err)
+        if(err.code === 'auth/account-exists-with-different-credential') {
+          let provider2 = new firebase.auth.GoogleAuthProvider();
+          provider2.setCustomParameters({login_hint: err.email});
+          firebase.auth().signInWithPopup(provider2).then((result) => {
+            this.$router.push('/admin/dashboard')
+          }).catch(err => {
+            errAlert(this, 'Hãy tắt pop-up block của trình duyệt')
+          })
+        }
+        this.isSigningIn = false
+      });
+    },
+    signUp() {
+      console.log(firebase.auth().currentUser)
+      console.log(firebase.auth())
     }
   }
 }

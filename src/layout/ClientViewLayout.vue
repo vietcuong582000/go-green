@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background-color: #d5f5e9;">
     <div class="header-home">
       <el-menu
         :default-active="activeIndex"
@@ -29,11 +29,10 @@
     </div>
     <div class="background">
     </div>
-    <div class="container-home">
       <div class="main-content">
         <router-view></router-view>
       </div>
-    </div>
+
     <div class="footer-home">
       <div style="color: #FFFFFF" class="footer-content">
         <el-row :gutter="20">
@@ -89,19 +88,12 @@
   width: 95%;
   margin: auto;
 }
-.container-home {
-  position: relative;
-  min-height: 50vh;
-  background-color: #d5f5e9;
-  padding-bottom: 30px;
-  padding-top: 30px;
-}
 .main-content {
   min-height: 50vh;
   width: 95%;
   background-color: #ffffff;
   border-radius: 10px;
-  margin: auto;
+  margin: -100px auto 30px auto;
   left: 2.5%;
   padding: 20px;
 }

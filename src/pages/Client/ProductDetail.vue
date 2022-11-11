@@ -1,5 +1,6 @@
 <template>
   <el-card shadow="never">
+    <vue-title title="GoGreen - Chi tiết sản phẩm"></vue-title>
     <span slot="header" style="font-weight: 600; font-size: 20px">Thông tin chi tiết sản phẩm</span>
     <el-row :gutter="20">
       <el-col :span="12">
@@ -53,8 +54,12 @@
 </style>
 <script>
 import {formatCurrency} from "@/utils/Fomatter";
+import VueTitle from "@/components/VueTitle";
 
 export default {
+  components: {
+    VueTitle
+  },
   props: {
     detail: {
       type: Object,
