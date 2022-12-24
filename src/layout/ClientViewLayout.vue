@@ -9,7 +9,7 @@
         text-color="#FFFFFF"
         active-text-color="#FFFFFF"
         @select="handleSelect">
-        <el-menu-item index="1">Trang chủ</el-menu-item>
+        <el-menu-item index="1" @click="goToHome">Trang chủ</el-menu-item>
         <el-submenu index="2">
           <template slot="title">Danh mục sản phẩm</template>
           <el-menu-item index="2-1">Trái cây</el-menu-item>
@@ -22,7 +22,7 @@
           <!--            <el-menu-item index="2-4-3">item three</el-menu-item>-->
           <!--          </el-submenu>-->
         </el-submenu>
-        <el-menu-item index="4"><a target="_blank">Giỏ hàng</a></el-menu-item>
+        <el-menu-item index="4" @click="goToCart"><a target="_blank">Giỏ hàng</a></el-menu-item>
         <el-menu-item index="5"><a target="_blank">Đơn hàng</a></el-menu-item>
         <el-menu-item index="6"><a target="_blank">Giới thiệu</a></el-menu-item>
       </el-menu>
@@ -71,7 +71,7 @@
 <style scoped>
 .background {
   min-height: 75vh;
-  background-image: url('../../public/img/background-home-4.jpg');
+  /*background-image: url('../../public/img/background-home-4.jpg');*/
   background-color: #d3d3d3;
   background-size: cover;
   background-repeat: no-repeat;
@@ -144,6 +144,16 @@ export default {
   methods: {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
+    },
+    goToHome() {
+      this.$router.push({
+        name: 'home'
+      })
+    },
+    goToCart() {
+      this.$router.push({
+        name: 'cart'
+      })
     }
   }
 }

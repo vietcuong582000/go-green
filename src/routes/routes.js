@@ -20,6 +20,7 @@ import CustomerList from "@/pages/Customers/CustomerList";
 import Home from "@/pages/Client/Home";
 import ProductDetail from "@/pages/Client/ProductDetail";
 import VueRouter from 'vue-router'
+import ShoppingCart from "@/pages/Client/ShoppingCart";
 
 const routes = [
   {
@@ -29,15 +30,20 @@ const routes = [
     children: [
       {
         path: 'home',
-        name: 'Home',
+        name: 'home',
         component: Home
       },
       {
-        path: 'product',
+        path: 'product/:id',
         component: ProductDetail,
         name: 'product',
         props: true
-      }
+      },
+      {
+        path: 'cart',
+        name: 'cart',
+        component: ShoppingCart
+      },
     ]
   },
   {
