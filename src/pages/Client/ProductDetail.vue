@@ -28,11 +28,11 @@
             />
           </div>
           <div style="margin-top: 10px">
-            <el-button class="buy-button">
-              <i class="el-icon-money" @click="onBuyNow" />
+            <el-button class="buy-button" @click="onBuyNow">
+              <i class="el-icon-money" />
               Đặt mua
             </el-button>
-            <el-button class="add-cart" @click="addToCart">
+            <el-button class="add-cart" @click="addToCart(false)">
               <i class="el-icon-shopping-cart-2" />
               Thêm vào giỏ hàng
             </el-button>
@@ -98,7 +98,7 @@ export default {
     })
   },
   methods: {
-    addToCart(isBuyNow = false) {
+    addToCart(isBuyNow) {
       let cart
       if (cart === []) {
         cart = localStorage.getItem('cart')
@@ -122,6 +122,7 @@ export default {
     },
     onBuyNow() {
       this.addToCart(true)
+      console.log('Buy now')
       this.$router.push({
         name: 'cart'
       })

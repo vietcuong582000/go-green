@@ -221,14 +221,16 @@ export default {
     } else {
       cart = JSON.parse(localStorage.getItem('cart'))
     }
-    const newCart = Object.values(cart.reduce((acc, cur) => {
+    if(cart) {
+      const newCart = Object.values(cart.reduce((acc, cur) => {
 
-      acc[cur.id] = acc[cur.id] || {...cur, quantity: '0'}
-      acc[cur.id].quantity = (Number(acc[cur.id].quantity) + Number(cur.quantity)).toString()
-      return acc
-    }, {}))
-    this.tableData = newCart
-    this.dataCart = newCart
+        acc[cur.id] = acc[cur.id] || {...cur, quantity: '0'}
+        acc[cur.id].quantity = (Number(acc[cur.id].quantity) + Number(cur.quantity)).toString()
+        return acc
+      }, {}))
+      this.tableData = newCart
+      this.dataCart = newCart
+    }
   },
   methods: {
     formatCurrencyFunction(number) {
