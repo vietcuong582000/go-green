@@ -23,7 +23,7 @@
           <!--          </el-submenu>-->
         </el-submenu>
         <el-menu-item index="4" @click="goToCart"><a target="_blank">Giỏ hàng</a></el-menu-item>
-        <el-menu-item index="5"><a target="_blank">Đơn hàng</a></el-menu-item>
+<!--        <el-menu-item index="5"><a target="_blank">Đơn hàng</a></el-menu-item>-->
         <el-menu-item index="6"><a target="_blank">Giới thiệu</a></el-menu-item>
       </el-menu>
     </div>
@@ -71,7 +71,7 @@
 <style scoped>
 .background {
   min-height: 75vh;
-  /*background-image: url('../../public/img/background-home-4.jpg');*/
+  background-image: url('../../public/img/background-home-4.jpg');
   background-color: #d3d3d3;
   background-size: cover;
   background-repeat: no-repeat;

@@ -3,7 +3,7 @@
     <vue-title title="GoGreen - Giỏ hàng"></vue-title>
     <span slot="header" style="font-weight: 600; font-size: 20px">Giỏ hàng</span>
     <el-row :gutter="20">
-      <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
+      <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24" style="margin-bottom: 10px; margin-top: 10px">
         <el-table
           :data="tableData"
           border
@@ -27,7 +27,7 @@
           >
             <template slot-scope="{row}">
               <div style="display: flex; gap: 10px">
-                <img :src="row.imgUrl"  alt="" style="max-width: 150px; height: 50px"/>
+                <img :src="row.imgUrl"  alt="" style="width: 90px; height: 50px"/>
                 <div style="width: calc(100% - 150px); text-align: left">
                   <div>{{ row.productName }}</div>
                   <div>Số lượng:
@@ -39,6 +39,7 @@
                         type="number"
                         size="mini"
                         :show-word-limit="true"
+                        @change="onChangeQuantity"
                       />
                   </div>
                   <div>Đơn giá: {{ formatCurrencyFunction(row.unitPrice) }}</div>
@@ -61,7 +62,7 @@
             :show-overflow-tooltip="true"
             align="center"
           >
-            <template slot-scope="{row}">
+            <template slot-scope="{row, $index}">
               <el-tooltip :content="'Xóa'" :open-delay="200" placement="top" effect="light">
                 <el-button
                   type="danger"
@@ -70,6 +71,7 @@
                   icon="el-icon-delete"
                   circle
                   plain
+                  @click="onDelete($index, row)"
                 >
                 </el-button>
               </el-tooltip>
@@ -77,27 +79,102 @@
           </el-table-column>
         </el-table>
       </el-col>
+      <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24" style="margin-bottom: 10px; margin-top: 10px">
+        <el-card class="info-cart" shadow="never">
+          <div slot="header">
+            <strong>Thông tin đơn hàng</strong>
+          </div>
+          <el-form ref="form" :model="form" :rules="rules" label-width="150px" label-position="left">
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-form-item label="Họ và tên" prop="customerName">
+                  <el-input
+                    v-model="form.customerName"
+                    placeholder="Họ và tên"
+                    maxlength="100"
+                    :show-word-limit="true"
+                    size="small"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="Địa chỉ" prop="customerAddress">
+                  <el-input
+                    v-model="form.customerAddress"
+                    placeholder="Địa chỉ"
+                    maxlength="255"
+                    :show-word-limit="true"
+                    size="small"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="Số điện thoại" prop="customerNumber">
+                  <el-input
+                    v-model="form.customerNumber"
+                    placeholder="Số điện thoại"
+                    maxlength="10"
+                    :show-word-limit="true"
+                    size="small"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="Email" prop="customerEmail">
+                  <el-input
+                    v-model="form.customerEmail"
+                    placeholder="Email"
+                    maxlength="100"
+                    :show-word-limit="true"
+                    size="small"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="Hình thức thanh toán" prop="paymentMethod" label-width="170px">
+                  <el-radio v-model="form.paymentMethod" label="1">Thanh toán trực tiếp</el-radio>
+                  <el-radio v-model="form.paymentMethod" label="2">Thanh toán online <img style="height: 20px" src="../../../public/img/vnpay2.jpg" alt=""/></el-radio>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" style="text-align: center">
+                <el-button
+                  class="pay-button"
+                  type="success"
+                  @click="onPay"
+                >Thanh toán</el-button>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-card>
+      </el-col>
     </el-row>
   </el-card>
 </template>
-<style>
-.buy-button {
+<style scoped>
+.pay-button {
   background: #29a974;
   color: #FFFFFF;
   -webkit-box-shadow: 0px 15px 30px -15px rgba(82,82,82,0.5);
   -moz-box-shadow: 0px 15px 30px -15px rgba(82,82,82,0.5);
   box-shadow: 0px 15px 30px -15px rgba(82,82,82,0.5);
 }
-.buy-button:hover {
+.pay-button:hover {
   background: #33b47e;
   color: #FFFFFF;
 }
-.add-cart {
+
+>>> .el-radio__input.is-checked+.el-radio__label {
   color: #29a974;
 }
-.add-cart:hover {
-  background: #92c5ac;
-  color: #FFFFFF;
+
+>>> .el-radio__input.is-checked .el-radio__inner {
+  border-color: #29a974;
+  background: #29a974;
+}
+
+>>> .info-cart .el-card__header {
+  padding-top: 10px;
+  padding-bottom: 9.5px;
 }
 </style>
 <script>
@@ -106,6 +183,8 @@ import VueTitle from "@/components/VueTitle";
 import ApiFactory from "@/utils/apiFactory";
 import {ConstantAPI} from "@/utils/ConstantAPI";
 import {errAlert} from "@/utils/Alert";
+import {FORM_MODE} from "@/utils/Constant";
+import {requiredRule} from "@/utils/Validate";
 
 const FUNCTION_CODE = 'PRODUCT'
 export default {
@@ -121,6 +200,18 @@ export default {
       tableData: [],
       tableDataAll: [],
       isLoadingTable: true,
+      form: {
+        customerName: '',
+        customerAddress: '',
+        customerNumber: '',
+        customerEmail: '',
+        paymentMethod: '1',
+      },
+      rules: {
+        customerName: requiredRule('Họ và tên'),
+        customerAddress: requiredRule('Địa chỉ'),
+        customerNumber: requiredRule('Số điện thoại')
+      }
     }
   },
   mounted() {
@@ -130,13 +221,65 @@ export default {
     } else {
       cart = JSON.parse(localStorage.getItem('cart'))
     }
-    this.tableData = cart
-    this.dataCart = cart
+    const newCart = Object.values(cart.reduce((acc, cur) => {
+
+      acc[cur.id] = acc[cur.id] || {...cur, quantity: '0'}
+      acc[cur.id].quantity = (Number(acc[cur.id].quantity) + Number(cur.quantity)).toString()
+      return acc
+    }, {}))
+    this.tableData = newCart
+    this.dataCart = newCart
   },
   methods: {
     formatCurrencyFunction(number) {
       return formatCurrency(number)
     },
+    // onShowConfirm() {
+    //   let message
+    //   let type
+    //   if (this.formMode === FORM_MODE.CREATE || this.formMode === FORM_MODE.EDIT) {
+    //     message = 'Bạn có chắc chắn muốn lưu dữ liệu?'
+    //     type = 'success'
+    //   } else if (this.formMode === FORM_MODE.DELETE) {
+    //     message = 'Bạn có chắc chắn muốn xóa dữ liệu?'
+    //     type = 'warning'
+    //   }
+    //   this.$refs.form.validate(valid => {
+    //     if (!valid) return false
+    //     this.$confirm(message, '', {
+    //       confirmButtonText: 'Có',
+    //       cancelButtonText: 'Không',
+    //       cancelButtonClass: 'el-icon-close',
+    //       confirmButtonClass: 'el-icon-check',
+    //       type: type
+    //     }).then(() => {
+    //       this.onSave()
+    //     }).catch(_ => {
+    //     })
+    //   })
+    // },
+    onChangeQuantity() {
+      localStorage.setItem('cart', JSON.stringify(this.tableData))
+    },
+    onDelete(index, row) {
+      this.$confirm(`Bạn có chắc muốn xóa sản phẩm "${row.productName}" khỏi giỏ hàng`, '', {
+        confirmButtonText: 'Có',
+        cancelButtonText: 'Không',
+        cancelButtonClass: 'el-icon-close',
+        confirmButtonClass: 'el-icon-check',
+        type: 'warning'
+      }).then(() => {
+        this.tableData.splice(index, 1)
+        localStorage.setItem('cart', JSON.stringify(this.tableData))
+      }).catch(_ => {
+      })
+    },
+    onPay() {
+      this.$refs.form.validate(valid => {
+        if(!valid) return
+        console.log("Thanh toán")
+      })
+    }
   },
 }
 </script>

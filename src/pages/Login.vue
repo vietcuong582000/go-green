@@ -44,7 +44,7 @@
   align-items: center;
   width: 100vw;
   height: 100vh;
-  /*background-image: url('../../public/img/background-admin-2.jpg');*/
+  background-image: url('../../public/img/background-admin-2.jpg');
 }
 .container {
   width: 400px;

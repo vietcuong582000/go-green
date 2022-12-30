@@ -5,7 +5,7 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <div style="height: 300px; max-width: 100%">
-<!--          <img style="max-height: 300px; max-width: 100%; display: block" :src="$route.params.imgUrl" class="image"  alt="" />-->
+          <img style="max-height: 300px; max-width: 100%; display: block" :src="productDetail.imgUrl" class="image"  alt="" />
         </div>
       </el-col>
       <el-col :span="12">
@@ -16,9 +16,20 @@
             <span style="font-weight: 600;color: red;">{{ formatCurrency(productDetail.discountPrice) }}/{{ productDetail.unit }}</span>
             <span style="margin-left: 15px; font-size: 14px; text-decoration: line-through;">{{ formatCurrency(productDetail.unitPrice) }}/{{ productDetail.unit }}</span>
           </div>
+          <div>
+            <el-input
+              v-model="quantity"
+              style="width: 80px"
+              placeholder="Số lượng"
+              maxlength="5"
+              type="number"
+              size="mini"
+              :show-word-limit="true"
+            />
+          </div>
           <div style="margin-top: 10px">
             <el-button class="buy-button">
-              <i class="el-icon-money" />
+              <i class="el-icon-money" @click="onBuyNow" />
               Đặt mua
             </el-button>
             <el-button class="add-cart" @click="addToCart">
@@ -32,7 +43,7 @@
     </el-row>
   </el-card>
 </template>
-<style>
+<style scoped>
 .buy-button {
   background: #29a974;
   color: #FFFFFF;
@@ -66,7 +77,8 @@ export default {
   },
   data() {
     return {
-      productDetail: {}
+      productDetail: {},
+      quantity: 1
     }
   },
   async beforeRouteUpdate(to, from) {
@@ -86,7 +98,7 @@ export default {
     })
   },
   methods: {
-    addToCart() {
+    addToCart(isBuyNow = false) {
       let cart
       if (cart === []) {
         cart = localStorage.getItem('cart')
@@ -96,8 +108,23 @@ export default {
       if(cart === null) {
         cart = []
       }
+      this.productDetail.quantity = this.quantity
       cart.push(this.productDetail)
       localStorage.setItem('cart', JSON.stringify(cart))
+      if (!isBuyNow) {
+        this.$notify({
+          title: 'Thêm thành công',
+          dangerouslyUseHTMLString: true,
+          message: 'Đã thêm <strong>' + this.quantity + '</strong> sản phẩm <strong>' + this.productDetail.productName + '</strong> vào giỏ hàng',
+          type: 'success'
+        });
+      }
+    },
+    onBuyNow() {
+      this.addToCart(true)
+      this.$router.push({
+        name: 'cart'
+      })
     },
     formatCurrency
   },
