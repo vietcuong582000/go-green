@@ -11,8 +11,8 @@
         </div>
       </div>
       <el-form ref="formLogin" id="formLogin" :model="formLogin" :rules="ruleFormLogin" class="form-login">
-        <el-form-item style="width: 95%" label="" label-width="0" prop="account">
-          <el-input v-model="formLogin.account" placeholder="Tài khoản"></el-input>
+        <el-form-item style="width: 95%" label="" label-width="0" prop="username">
+          <el-input v-model="formLogin.username" placeholder="Tài khoản"></el-input>
         </el-form-item>
         <el-form-item style="width: 95%" label="" label-width="0" prop="password">
           <el-input v-model="formLogin.password" placeholder="Password" show-password></el-input>
@@ -131,6 +131,8 @@ import {requiredRule} from "@/utils/Validate";
 import firebase from 'firebase'
 import VueTitle from "@/components/VueTitle";
 import {errAlert} from "@/utils/Alert";
+import ApiFactory from "@/utils/apiFactory";
+import {ConstantAPI} from "@/utils/ConstantAPI";
 
 export default {
   components: {
@@ -139,12 +141,12 @@ export default {
   data() {
     return {
       formLogin: {
-        account: '',
+        username: '',
         password: '',
       },
       remember: '',
       ruleFormLogin: {
-        account: [requiredRule('Tài khoản',['change', 'blur'])],
+        username: [requiredRule('Tài khoản',['change', 'blur'])],
         password: [requiredRule('Password',['change', 'blur'])],
       },
       isSigningIn: false
@@ -155,10 +157,17 @@ export default {
       this.$refs.formLogin.validate(valid => {
         if(!valid) return false
         this.isSigningIn = true
-        setTimeout(() => {
-          this.$router.push('/admin/dashboard')
+        // setTimeout(() => {
+        //   this.$router.push('/admin/dashboard')
+        //   this.isSigningIn = false
+        // }, 3000)
+        ApiFactory.callAPI(ConstantAPI['LOGIN'], this.formLogin, '').then(rs => {
+          console.log(rs)
+        }).catch(err => {
+          errAlert(this, err)
+        }).finally(() => {
           this.isSigningIn = false
-        }, 3000)
+        })
       })
     },
     signInWithGmail() {

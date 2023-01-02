@@ -122,7 +122,6 @@ export default {
     },
     onBuyNow() {
       this.addToCart(true)
-      console.log('Buy now')
       this.$router.push({
         name: 'cart'
       })

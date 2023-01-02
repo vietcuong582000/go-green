@@ -1,6 +1,10 @@
 import {API_DEFAULT} from "@/utils/Constant";
 
 export const ConstantAPI = {
+  'LOGIN': {
+    url: `${API_DEFAULT}/auth/login`,
+    method: 'POST'
+  },
   'PRODUCT': {
     CREATE: {
       url: `${API_DEFAULT}/products`,
@@ -25,7 +29,7 @@ export const ConstantAPI = {
       method: 'POST'
     },
     GET: {
-      url: `${API_DEFAULT}/category`,
+      url: `${API_DEFAULT}/category/search`,
       method: 'GET'
     },
     UPDATE: {
