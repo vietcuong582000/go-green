@@ -138,6 +138,7 @@
                   <el-radio v-model="form.paymentMethod" label="2">Thanh toán online <img style="height: 20px" src="../../../public/img/vnpay2.jpg" alt=""/></el-radio>
                 </el-form-item>
               </el-col>
+              <a id="urlVnPay" style="visibility: hidden" :href="this.urlVnPay" target="_blank"> Link </a>
               <el-col :span="24" style="text-align: center">
                 <el-button
                   class="pay-button"
@@ -183,7 +184,7 @@
 import {formatCurrency} from "@/utils/Fomatter";
 import VueTitle from "@/components/VueTitle";
 import {requiredRule} from "@/utils/Validate";
-import { sha265 } from "sha256";
+import sha265 from "sha256";
 
 const FUNCTION_CODE = 'PRODUCT'
 export default {
@@ -210,7 +211,8 @@ export default {
         customerName: requiredRule('Họ và tên'),
         customerAddress: requiredRule('Địa chỉ'),
         customerNumber: requiredRule('Số điện thoại')
-      }
+      },
+      urlVnPay: ''
     }
   },
   mounted() {
@@ -322,26 +324,30 @@ export default {
           }
           console.log('' + year + month + date + hour + minute + second)
           let params = {
-            vpn_Amount: this.totalPrice * 100,
+            vnp_Amount: this.totalPrice * 100,
             vnp_Command: 'pay',
             vnp_CreateDate: '' + year + month + date + hour + minute + second ,
             vnp_CurrCode: 'VND',
             vnp_IpAddr: '126.0.0.1',
             vnp_Locale: 'vn',
-            vnp_OrderInfo: encodeURIComponent('Thanh toán đơn hàng GoGreen'),
+            vnp_OrderInfo: 'Thanh+toan+don+hang+GoGreen',
             vnp_OrderType: 'other',
             vnp_ReturnUrl: 'http%3A%2F%2Flocalhost%3A8080%2F%23%2Fpayment-status',
             vnp_TmnCode: 'TKFPLOQ4',
-            vnp_TxnRef: '56789',
+            vnp_TxnRef: '' + year + month + date + hour + minute + second,
             vnp_Version: '2.1.0',
           }
           let strParam = Object.keys(params).map(function(key) {
             return key + '=' + params[key];
           }).join('&');
           urlVnPay = `${urlVnPay}?${strParam}`;
-          const secureHash = sha256(hashSecret + strParam)
+          const secureHash = sha265(hashSecret + strParam)
           urlVnPay = urlVnPay + '&vnp_SecureHash=' + secureHash
           console.log(urlVnPay)
+          this.urlVnPay = urlVnPay
+          setTimeout(() => {
+            document.getElementById('urlVnPay').click()
+          }, 1000)
         }
       })
     }
