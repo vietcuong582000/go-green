@@ -21,7 +21,7 @@
             type="index"
             :index="(i) => {return ((currentPage >= 1 ? currentPage - 1 : 0) * pageSize) + i + 1}"/>
           <el-table-column
-            prop="productId"
+            prop="productCode"
             label="Mã sản phẩm"
             header-align="center"
             :show-overflow-tooltip="true"
@@ -204,10 +204,10 @@
       getListProduct() {
         this.isLoadingTable = true
         ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, '').then(rs => {
-          this.tableDataAll = rs
+          this.tableDataAll = rs.response_data.data
           this.handleCurrentChange(1)
           this.pageSize = 10
-          this.total = rs.length
+          this.total = rs.response_data.total_element
           this.isLoadingTable = false
         }).catch(err => {
           errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')

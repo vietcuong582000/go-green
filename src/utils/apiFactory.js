@@ -26,9 +26,18 @@ export function isValidDateTime(datetime) {
   return datetime && Object.prototype.toString.call(datetime) === '[object Date]' && !isNaN(datetime);
 }
 
+export function getToken() {
+  let user = JSON.parse(localStorage.getItem('user'));
+
+  if (user && user.access_token) {
+    return 'Bearer ' + user.access_token
+  } else {
+    return ''
+  }
+}
+
 export const getHeader = () => ({
-  // Authorization: getToken(),
-  // cApiKey: process.env.VUE_APP_API_KEY,
+  Authorization: getToken(),
   'Content-Type': 'application/json;charset=UTF-8'
 })
 
@@ -40,7 +49,15 @@ class ApiFactory {
    * @param pToken: ACCESS_TOKEN
    * */
   static callAPI(constantApi, payload = {}, params = {}, pToken = undefined) {
-    const url = `${constantApi.url}/${params}`;
+    let url, strParam
+    if(params) {
+      strParam = Object.keys(params).map(function(key) {
+        return key + '=' + params[key];
+      }).join('&');
+      url = `${constantApi.url}?${strParam}`;
+    } else {
+      url = `${constantApi.url}`;
+    }
     const method = constantApi.method;
     const headers = getHeader()
     if (pToken) {
@@ -54,6 +71,10 @@ class ApiFactory {
     }).then(res => {
       return res.data;
     }).catch(err => {
+      console.log(err)
+      if(err.status === 401) {
+        localStorage.removeItem('user');
+      }
       return Promise.reject(err)
     });
   }

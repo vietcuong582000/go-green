@@ -57,10 +57,10 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.authRequired)) {
-    if (firebase.auth().currentUser) {
+    if (firebase.auth().currentUser || localStorage.getItem('user')) {
       next();
     } else {
-      alert('Trang này chỉ dành cho tài khoản quản trị viên');
+      alert('Đăng nhập tài khoản quản trị viên để vào trang này');
       next({
         path: '/login',
       });

@@ -8,6 +8,8 @@
           :data="tableData"
           border
           stripe
+          :summary-method="getSummaries"
+          show-summary
           style="width: 100%">
           <el-table-column
             prop="stt"
@@ -48,7 +50,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="quantity"
+            prop="totalPrice"
             label="Thành tiền"
             :show-overflow-tooltip="true"
             header-align="center"
@@ -140,8 +142,8 @@
                 <el-button
                   class="pay-button"
                   type="success"
-                  @click="onPay"
-                >Thanh toán</el-button>
+                  @click="onOrder"
+                >Đặt hàng</el-button>
               </el-col>
             </el-row>
           </el-form>
@@ -180,11 +182,8 @@
 <script>
 import {formatCurrency} from "@/utils/Fomatter";
 import VueTitle from "@/components/VueTitle";
-import ApiFactory from "@/utils/apiFactory";
-import {ConstantAPI} from "@/utils/ConstantAPI";
-import {errAlert} from "@/utils/Alert";
-import {FORM_MODE} from "@/utils/Constant";
 import {requiredRule} from "@/utils/Validate";
+import { sha265 } from "sha256";
 
 const FUNCTION_CODE = 'PRODUCT'
 export default {
@@ -232,6 +231,14 @@ export default {
       this.dataCart = newCart
     }
   },
+  computed: {
+    totalPrice() {
+      const tongTien = this.tableData.reduce((acc, cur) => {
+        return acc + (cur.unitPrice * cur.quantity)
+      }, 0)
+      return tongTien
+    }
+  },
   methods: {
     formatCurrencyFunction(number) {
       return formatCurrency(number)
@@ -276,12 +283,69 @@ export default {
       }).catch(_ => {
       })
     },
-    onPay() {
+    getSummaries(param) {
+      const sums = [];
+      sums[0] = ''
+      sums[1] = 'Tổng tiền'
+      const tongTien = this.tableData.reduce((acc, cur) => {
+        return acc + (cur.unitPrice * cur.quantity)
+      }, 0)
+      sums[2] = this.formatCurrencyFunction(tongTien)
+      return sums;
+    },
+    onOrder() {
       this.$refs.form.validate(valid => {
         if(!valid) return
-        console.log("Thanh toán")
+        if(this.form.paymentMethod === '2') {
+          let urlVnPay = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
+          let hashSecret = 'YTPTETIVKQJKEYPIDNKKDGQOKXYTSHDJ'
+          let year = new Date().getFullYear()
+          let month = new Date().getMonth() + 1
+          if (month < 10) {
+            month = '0' + month
+          }
+          let date = new Date().getDate()
+          if (date < 10) {
+            date = '0' + date
+          }
+          let hour = new Date().getHours()
+          if(hour < 10) {
+            hour = '0' + hour
+          }
+          let minute = new Date().getMinutes()
+          if(minute < 10) {
+            minute = '0' + minute
+          }
+          let second = new Date().getSeconds()
+          if(second < 10) {
+            second = '0' + second
+          }
+          console.log('' + year + month + date + hour + minute + second)
+          let params = {
+            vpn_Amount: this.totalPrice * 100,
+            vnp_Command: 'pay',
+            vnp_CreateDate: '' + year + month + date + hour + minute + second ,
+            vnp_CurrCode: 'VND',
+            vnp_IpAddr: '126.0.0.1',
+            vnp_Locale: 'vn',
+            vnp_OrderInfo: encodeURIComponent('Thanh toán đơn hàng GoGreen'),
+            vnp_OrderType: 'other',
+            vnp_ReturnUrl: 'http%3A%2F%2Flocalhost%3A8080%2F%23%2Fpayment-status',
+            vnp_TmnCode: 'TKFPLOQ4',
+            vnp_TxnRef: '56789',
+            vnp_Version: '2.1.0',
+          }
+          let strParam = Object.keys(params).map(function(key) {
+            return key + '=' + params[key];
+          }).join('&');
+          urlVnPay = `${urlVnPay}?${strParam}`;
+          const secureHash = sha256(hashSecret + strParam)
+          urlVnPay = urlVnPay + '&vnp_SecureHash=' + secureHash
+          console.log(urlVnPay)
+        }
       })
     }
   },
 }
+
 </script>

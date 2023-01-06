@@ -10,9 +10,9 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="150px" label-position="left">
         <el-row :gutter="20">
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Mã sản phẩm" prop="productId">
+            <el-form-item label="Mã sản phẩm" prop="productCode">
               <el-input
-                v-model="form.productId"
+                v-model="form.productCode"
                 placeholder="Mã sản phẩm"
                 maxlength="50"
                 :show-word-limit="true"
@@ -47,13 +47,20 @@
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
             <el-form-item label="Đơn vị tính" prop="unit">
-              <el-input
+              <el-select
+                :disabled="formMode === FORM_MODE.DELETE"
                 v-model="form.unit"
                 placeholder="Đơn vị tính"
-                maxlength="10"
-                :disabled="formMode === FORM_MODE.DELETE"
-                :show-word-limit="true"
-              />
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in listUnit"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
@@ -68,13 +75,21 @@
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Danh mục" prop="idCategory">
-              <el-select style="width: 100%" :disabled="formMode === FORM_MODE.DELETE" v-model="form.idCategory" placeholder="Danh mục">
+            <el-form-item label="Danh mục" prop="listOfCategory">
+              <el-select
+                :disabled="formMode === FORM_MODE.DELETE"
+                v-model="form.listOfCategory"
+                placeholder="Danh mục"
+                multiple
+                style="width: 100%"
+                @change="onChangeCategory"
+              >
                 <el-option
                   v-for="item in listDanhMuc"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                >
                 </el-option>
               </el-select>
             </el-form-item>
@@ -104,9 +119,9 @@
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Đơn giá đã giảm" prop="discountPrice">
+            <el-form-item label="Đơn giá đã giảm" prop="discountedPrice">
               <money-input
-                :value.sync="form.discountPrice"
+                :value.sync="form.discountedPrice"
                 placeholder="Đơn giá đã giảm"
                 :max-length="'15'"
                 :is-disable="isCheckedTiLe || formMode === FORM_MODE.DELETE"
@@ -133,7 +148,7 @@
           <el-col :xl="5" :lg="5" :md="12" :sm="12" :xs="12">
             <el-form-item label="" label-width="0">
               <el-checkbox
-                v-model="isCheckedTiLe || formMode === FORM_MODE.DELETE"
+                v-model="isCheckedTiLe"
                 :disabled="formMode === FORM_MODE.DELETE"
                 @change="onChangeCheckbox"
               >
@@ -293,9 +308,9 @@ export default {
     return {
       form: {...FORM_DEFAULT},
       rules: {
-        productId: [requiredRule('Mã sản phẩm')],
+        productCode: [requiredRule('Mã sản phẩm')],
         productName: [requiredRule('Tên sản phẩm')],
-        idCategory: [requiredRule('Danh mục')],
+        listOfCategory: [requiredRule('Danh mục')],
         unitPrice: [requiredRule('Đơn giá'), numberRule('Đơn giá'), { validator: this.validateUnitPrice, trigger: ['change', 'blur'] }],
         unit: [requiredRule('Đơn vị tính')],
         quantity: [requiredRule('Số lượng'), numberRule('Số lượng')],
@@ -303,18 +318,23 @@ export default {
         importDate: [requiredRule('Ngày nhập')],
         expirationDate: [requiredRule('Ngày hết hạn')],
         discount: [numberRule('Tỉ lệ giảm giá')],
-        discountPrice: [numberRule('Đơn giá đã giảm'), { validator: this.validateDiscountPrice, trigger: ['change', 'blur'] }],
+        discountedPrice: [numberRule('Đơn giá đã giảm'), { validator: this.validateDiscountPrice, trigger: ['change', 'blur'] }],
         status: [requiredRule('Trạng thái')],
       },
       isCheckedTiLe: true,
-      listDanhMuc: [
+      listDanhMuc: [],
+      listUnit: [
         {
-          value: 'Trái cây',
-          label: 'Trái cây'
+          value: 'Kg',
+          label: 'Kg'
         },
         {
-          value: 'Rau củ',
-          label: 'Rau củ'
+          value: 'Quả',
+          label: 'Quả'
+        },
+        {
+          value: 'Giỏ',
+          label: 'Giỏ'
         }
       ],
       listTrangThai: [
@@ -345,6 +365,13 @@ export default {
       }
     }
   },
+  mounted() {
+    ApiFactory.callAPI(ConstantAPI['CATEGORY'].GET, {}, '').then(rs => {
+      this.listDanhMuc = rs.response_data.data
+    }).catch(err => {
+      errAlert(this, 'Lỗi khi lấy danh mục sản phẩm')
+    })
+  },
   methods: {
     onShowConfirm() {
       let message
@@ -357,7 +384,7 @@ export default {
         type = 'warning'
       }
       this.$refs.form.validate(valid => {
-        if (!valid) return false
+        if (!valid && this.formMode !== FORM_MODE.DELETE) return false
         this.$confirm(message, '', {
           confirmButtonText: 'Có',
           cancelButtonText: 'Không',
@@ -386,13 +413,13 @@ export default {
           api = ConstantAPI[FUNCTION_CODE].UPDATE
           alert = 'Thay đổi thông tin thành công sản phẩm: '
           payload = this.form
-          param = this.form.id
+          // param = this.form.id
           break
         case FORM_MODE.DELETE:
           api = ConstantAPI[FUNCTION_CODE].DELETE
           alert = 'Xóa thành công sản phẩm: '
           payload = {}
-          param = this.form.id
+          param = { id: this.form.id }
           break
       }
       this.isWaitingApi = true
@@ -404,7 +431,7 @@ export default {
         this.file = null
       }
       ApiFactory.callAPI(api, payload, param).then(rs => {
-        showAlert(this, SUCCESS, alert + rs.productName)
+        showAlert(this, SUCCESS, alert + this.form.productName)
         this.close()
         this.$emit('on-success')
       }).catch(err => {
@@ -413,14 +440,17 @@ export default {
         this.isWaitingApi = false
       })
     },
+    onChangeCategory() {
+      console.log(this.form.listOfCategory)
+    },
     onChangeCheckbox() {
       this.form.discount = ''
-      this.form.discountPrice = ''
+      this.form.discountedPrice = ''
     },
     onChangeUnitPrice() {
       if(this.isCheckedTiLe && this.form.discount) {
         this.onChangeDiscount()
-      } else if (!this.isCheckedTiLe && this.form.discountPrice) {
+      } else if (!this.isCheckedTiLe && this.form.discountedPrice) {
         this.onChangeDiscountPrice()
       }
     },
@@ -428,13 +458,16 @@ export default {
       if(!this.isCheckedTiLe || !this.form.unitPrice) {
         return
       }
-      this.form.discountPrice = this.form.unitPrice - Math.round((this.form.unitPrice * this.form.discount) / 100)
+      this.form.discountedPrice = this.form.unitPrice - Math.round((this.form.unitPrice * this.form.discount) / 100)
+      if(!this.form.discount) {
+        this.form.discountedPrice = ''
+      }
     },
     onChangeDiscountPrice() {
       if(this.isCheckedTiLe || !this.form.unitPrice) {
         return
       }
-      this.form.discount = 100 - Math.ceil((this.form.discountPrice / this.form.unitPrice) * 100)
+      this.form.discount = 100 - Math.ceil((this.form.discountedPrice / this.form.unitPrice) * 100)
       if(this.form.discount >= 100 || this.form.discount < 0) {
         this.form.discount = 0
       }
@@ -444,7 +477,7 @@ export default {
       this.imgUrl = URL.createObjectURL(this.file)
     },
     onValidatePrice() {
-      this.$refs.form.validateField(['unitPrice', 'discountPrice'])
+      this.$refs.form.validateField(['unitPrice', 'discountedPrice'])
     },
     clearForm() {
       this.form = {...FORM_DEFAULT}
@@ -458,14 +491,14 @@ export default {
       this.$emit('close-dialog')
     },
     validateUnitPrice(rule, value, callback) {
-      if (Number(this.form.unitPrice) < Number(this.form.discountPrice)) {
+      if (Number(this.form.unitPrice) < Number(this.form.discountedPrice)) {
         callback(new Error(`Đơn giá không được nhỏ hơn Đơn giá đã giảm`))
       } else {
         callback()
       }
     },
     validateDiscountPrice(rule, value, callback) {
-      if (Number(this.form.unitPrice) < Number(this.form.discountPrice)) {
+      if (Number(this.form.unitPrice) < Number(this.form.discountedPrice)) {
         callback(new Error(`Đơn giá đã giảm không được lớn hơn Đơn giá`))
       } else {
         callback()
@@ -474,9 +507,9 @@ export default {
   }
 };
 const FORM_DEFAULT = {
-  productId: '',
+  productCode: '',
   productName: '',
-  idCategory: '',
+  listOfCategory: [],
   unitPrice: '',
   unit: '',
   quantity: '',
@@ -484,7 +517,7 @@ const FORM_DEFAULT = {
   importDate: new Date(),
   expirationDate: new Date(),
   discount: '',
-  discountPrice: '',
+  discountedPrice: '',
   status: '0',
   imgUrl: ''
 }

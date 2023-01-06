@@ -21,6 +21,8 @@ import Home from "@/pages/Client/Home";
 import ProductDetail from "@/pages/Client/ProductDetail";
 import VueRouter from 'vue-router'
 import ShoppingCart from "@/pages/Client/ShoppingCart";
+import HomeProductList from "@/pages/Client/HomeProductList";
+import PaymentStatus from "@/pages/PaymentStatus";
 
 const routes = [
   {
@@ -34,6 +36,11 @@ const routes = [
         component: Home
       },
       {
+        path: 'product-list',
+        name: 'homeProductList',
+        component: HomeProductList
+      },
+      {
         path: 'product/:id',
         component: ProductDetail,
         name: 'product',
@@ -44,6 +51,11 @@ const routes = [
         name: 'cart',
         component: ShoppingCart
       },
+      {
+        path: 'payment-status',
+        name: 'payment-status',
+        component: PaymentStatus,
+      }
     ]
   },
   {

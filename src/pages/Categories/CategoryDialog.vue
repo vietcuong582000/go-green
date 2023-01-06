@@ -137,18 +137,18 @@ export default {
           api = ConstantAPI[FUNCTION_CODE].UPDATE
           alert = 'Thay đổi thông tin thành công danh mục: '
           payload = this.form
-          param = this.form.id
+          // param = this.form.id
           break
         case FORM_MODE.DELETE:
           api = ConstantAPI[FUNCTION_CODE].DELETE
           alert = 'Xóa thành công danh mục: '
           payload = {}
-          param = this.form.id
+          param = { id: this.form.id }
           break
       }
       this.isWaitingApi = true
       ApiFactory.callAPI(api, payload, param).then(rs => {
-        showAlert(this, SUCCESS, alert + rs.name)
+        showAlert(this, SUCCESS, alert + this.form.name)
         this.close()
         this.$emit('on-success')
       }).catch(err => {

@@ -10,18 +10,19 @@
         active-text-color="#FFFFFF"
         @select="handleSelect">
         <el-menu-item index="1" @click="goToHome">Trang chủ</el-menu-item>
-        <el-submenu index="2">
-          <template slot="title">Danh mục sản phẩm</template>
-          <el-menu-item index="2-1">Trái cây</el-menu-item>
-          <el-menu-item index="2-2">Giỏ trái cây</el-menu-item>
-          <el-menu-item index="2-3">Sản phẩm từ trái cây</el-menu-item>
+        <el-menu-item index="2" @click="gotoProductList">Danh sách sản phẩm</el-menu-item>
+<!--        <el-submenu index="2">-->
+<!--          <template slot="title">Danh mục sản phẩm</template>-->
+<!--          <el-menu-item index="2-1">Trái cây</el-menu-item>-->
+<!--          <el-menu-item index="2-2">Giỏ trái cây</el-menu-item>-->
+<!--          <el-menu-item index="2-3">Sản phẩm từ trái cây</el-menu-item>-->
           <!--          <el-submenu index="2-4">-->
           <!--            <template slot="title">Giỏ hàng</template>-->
           <!--            <el-menu-item index="2-4-1">item one</el-menu-item>-->
           <!--            <el-menu-item index="2-4-2">item two</el-menu-item>-->
           <!--            <el-menu-item index="2-4-3">item three</el-menu-item>-->
           <!--          </el-submenu>-->
-        </el-submenu>
+<!--        </el-submenu>-->
         <el-menu-item index="4" @click="goToCart"><a target="_blank">Giỏ hàng</a></el-menu-item>
 <!--        <el-menu-item index="5"><a target="_blank">Đơn hàng</a></el-menu-item>-->
         <el-menu-item index="6"><a target="_blank">Giới thiệu</a></el-menu-item>
@@ -134,11 +135,13 @@
 </style>
 
 <script>
+
 export default {
   data() {
     return {
       activeIndex: '1',
-      activeIndex2: '1'
+      activeIndex2: '1',
+      listDanhMuc: []
     };
   },
   methods: {
@@ -148,6 +151,11 @@ export default {
     goToHome() {
       this.$router.push({
         name: 'home'
+      })
+    },
+    gotoProductList() {
+      this.$router.push({
+        name: 'homeProductList'
       })
     },
     goToCart() {

@@ -1,22 +1,8 @@
 <template>
   <div>
-    <vue-title title="GoGreen - Trái cây tươi"></vue-title>
-    <el-carousel type="card" :interval="3000" style="width: 960px; margin: auto" :height="'270px'" indicator-position="outside">
-      <el-carousel-item>
-        <img style="width: 480px" src="../../../public/img/background-admin.jpg" alt="" />
-      </el-carousel-item>
-      <el-carousel-item>
-        <img style="width: 480px" src="../../../public/img/background-admin-2.jpg" alt="" />
-      </el-carousel-item>
-      <el-carousel-item>
-        <img style="width: 480px" src="../../../public/img/background-admin-3.jpg" alt="" />
-      </el-carousel-item>
-      <el-carousel-item>
-        <img style="width: 480px" src="../../../public/img/background-admin-4.jpg" alt="" />
-      </el-carousel-item>
-    </el-carousel>
+    <vue-title title="GoGreen - Danh sách sản phẩm"></vue-title>
     <el-card shadow="never">
-      <span slot="header" style="font-weight: 600; font-size: 20px">Trang chủ</span>
+      <span slot="header" style="font-weight: 600; font-size: 20px">Danh sách sản phẩm</span>
       <el-row :gutter="20">
         <el-col v-for="item in productList" :key="item.id" style="padding-bottom: 10px; padding-top: 10px" :xl="6" :lg="6" :md="8" :sm="12" :xs="12">
           <el-card shadow="hover" style="cursor: pointer" :body-style="{ padding: '15px' }" @click.native="showDetail(item)">
@@ -35,6 +21,16 @@
         </el-col>
       </el-row>
     </el-card>
+    <div style="height: 20px"></div>
+    <el-pagination
+      style="text-align: center;"
+      :current-page.sync="currentPage"
+      background
+      layout="prev, pager, next"
+      :page-size.sync="pageSize"
+      :total="total"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 <style>
@@ -78,6 +74,10 @@ export default {
   data() {
     return {
       productList: [],
+      productListAll: [],
+      total: 0,
+      currentPage: 1,
+      pageSize: 2,
       isLoadingList: false
     }
   },
@@ -87,8 +87,11 @@ export default {
   methods: {
     getListProduct() {
       this.isLoadingList = true
-      ApiFactory.callAPI(ConstantAPI['PRODUCT'].GET_HOME, {}, '').then(rs => {
-        this.productList = rs.response_data.data.slice(0, 9);
+      ApiFactory.callAPI(ConstantAPI['PRODUCT'].GET_HOME, {}, {}).then(rs => {
+        this.productListAll = rs.response_data.data
+        this.handleCurrentChange(1)
+        this.total = rs.response_data.total_element
+        this.isLoadingTable = false
       }).catch(err => {
         errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')
       })
@@ -98,6 +101,11 @@ export default {
         name: 'product',
         params: { id: item.id }
       })
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.productList = this.productListAll.slice((val-1) * this.pageSize, (val-1) * this.pageSize + this.pageSize)
+      scrollTo(0, 800)
     },
     formatCurrency
   }

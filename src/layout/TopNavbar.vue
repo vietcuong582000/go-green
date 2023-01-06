@@ -105,6 +105,7 @@
           confirmButtonClass: 'el-icon-check',
           type: 'warning'
         }).then(() => {
+          if(firebase.auth().currentUser) {
             firebase
               .auth()
               .signOut()
@@ -112,6 +113,11 @@
                 console.log('Successfully logged out');
                 this.$router.push('/login');
               })
+          } else {
+            localStorage.removeItem('user');
+            this.$router.push('/login');
+          }
+
         }).catch(error => {
           alert(error.message);
         })

@@ -25,6 +25,9 @@
           </el-switch>
           <span style="color: #29a974">Ghi nhớ đăng nhập</span>
         </div>
+        <div style="height:14px; width: 100%; font-size:14px; line-height: 0; margin-top: 10px; color: red; text-align: center">
+          <span v-if="isAccountNotFound">Tài khoản hoặc mật khẩu không đúng</span>
+        </div>
         <el-button :loading="isSigningIn" class="login-button" @click="signIn">Đăng nhập</el-button>
         <div class="sign-up-container">
           Bạn chưa có tài khoản?
@@ -86,10 +89,11 @@
   width: 95%;
   gap: 10px;
   margin-top: 5px;
+  margin-bottom: 10px;
 }
 .login-button {
   width: 95%;
-  margin-top: 40px;
+  margin-top: 10px;
   background: #29a974;
   border-radius: 8px;
   outline: none;
@@ -149,22 +153,32 @@ export default {
         username: [requiredRule('Tài khoản',['change', 'blur'])],
         password: [requiredRule('Password',['change', 'blur'])],
       },
-      isSigningIn: false
+      isSigningIn: false,
+      isAccountNotFound: false
     }
   },
   methods: {
     signIn() {
       this.$refs.formLogin.validate(valid => {
         if(!valid) return false
+        this.isAccountNotFound = false
         this.isSigningIn = true
         // setTimeout(() => {
         //   this.$router.push('/admin/dashboard')
         //   this.isSigningIn = false
         // }, 3000)
         ApiFactory.callAPI(ConstantAPI['LOGIN'], this.formLogin, '').then(rs => {
-          console.log(rs)
+          if(rs.username && rs.access_token) {
+            localStorage.setItem('user', JSON.stringify(rs))
+            this.$router.push('/admin/dashboard')
+          }
         }).catch(err => {
-          errAlert(this, err)
+          if(err.status === 401) {
+            this.isAccountNotFound = true
+          } else {
+            this.isAccountNotFound = false
+            console.log(err)
+          }
         }).finally(() => {
           this.isSigningIn = false
         })

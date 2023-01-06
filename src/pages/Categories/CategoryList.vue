@@ -135,13 +135,13 @@ export default {
     getListCategory() {
       this.isLoadingTable = true
       ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, '').then(rs => {
-        this.tableDataAll = rs
+        this.tableDataAll = rs.response_data.data
         this.handleCurrentChange(1)
         this.pageSize = 10
-        this.total = rs.length
+        this.total = rs.response_data.total_element
         this.isLoadingTable = false
       }).catch(err => {
-        errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')
+        errAlert(this, 'Lỗi khi lấy danh mục sản phẩm')
       })
     },
     showDialog(formMode, row) {

@@ -7,25 +7,33 @@ export const ConstantAPI = {
   },
   'PRODUCT': {
     CREATE: {
-      url: `${API_DEFAULT}/products`,
+      url: `${API_DEFAULT}/product/save`,
       method: 'POST'
     },
     GET: {
-      url: `${API_DEFAULT}/products`,
+      url: `${API_DEFAULT}/product/search`,
+      method: 'GET'
+    },
+    GET_HOME: {
+      url: `${API_DEFAULT}/home/product/search`,
+      method: 'GET'
+    },
+    GET_BY_ID: {
+      url: `${API_DEFAULT}/home/product`,
       method: 'GET'
     },
     UPDATE: {
-      url: `${API_DEFAULT}/products`,
-      method: 'PUT'
+      url: `${API_DEFAULT}/product/save`,
+      method: 'POST'
     },
     DELETE: {
-      url: `${API_DEFAULT}/products`,
-      method: 'DELETE'
+      url: `${API_DEFAULT}/product/delete`,
+      method: 'GET'
     }
   },
   'CATEGORY': {
     CREATE: {
-      url: `${API_DEFAULT}/category`,
+      url: `${API_DEFAULT}/category/save`,
       method: 'POST'
     },
     GET: {
@@ -33,12 +41,12 @@ export const ConstantAPI = {
       method: 'GET'
     },
     UPDATE: {
-      url: `${API_DEFAULT}/category`,
-      method: 'PUT'
+      url: `${API_DEFAULT}/category/save`,
+      method: 'POST'
     },
     DELETE: {
-      url: `${API_DEFAULT}/category`,
-      method: 'DELETE'
+      url: `${API_DEFAULT}/category/delete`,
+      method: 'GET'
     }
   },
   'ORDER': {

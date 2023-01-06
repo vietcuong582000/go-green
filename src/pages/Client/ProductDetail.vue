@@ -13,7 +13,7 @@
           <span style="font-size: 18px;font-weight: 700">{{ productDetail.productName }}</span>
           <div class="icon-discount">-{{ productDetail.discount }}%</div>
           <div>
-            <span style="font-weight: 600;color: red;">{{ formatCurrency(productDetail.discountPrice) }}/{{ productDetail.unit }}</span>
+            <span style="font-weight: 600;color: red;">{{ formatCurrency(productDetail.discountedPrice) }}/{{ productDetail.unit }}</span>
             <span style="margin-left: 15px; font-size: 14px; text-decoration: line-through;">{{ formatCurrency(productDetail.unitPrice) }}/{{ productDetail.unit }}</span>
           </div>
           <div>
@@ -83,16 +83,16 @@ export default {
   },
   async beforeRouteUpdate(to, from) {
     // react to route changes...
-    await ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, to.params.id).then(rs => {
-      this.productDetail = rs
+    await ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET_BY_ID, {}, { id: to.params.id }).then(rs => {
+      this.productDetail = rs.response_data
     }).catch(err => {
       errAlert(this, 'Lỗi khi lấy thông tin sản phẩm')
     })
 
   },
   mounted() {
-    ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, this.$route.params.id).then(rs => {
-      this.productDetail = rs
+    ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET_BY_ID, {}, {id: this.$route.params.id}).then(rs => {
+      this.productDetail = rs.response_data
     }).catch(err => {
       errAlert(this, 'Lỗi khi lấy thông tin sản phẩm')
     })
