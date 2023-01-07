@@ -138,7 +138,7 @@
                   <el-radio v-model="form.paymentMethod" label="2">Thanh toán online <img style="height: 20px" src="../../../public/img/vnpay2.jpg" alt=""/></el-radio>
                 </el-form-item>
               </el-col>
-              <a id="urlVnPay" style="visibility: hidden" :href="this.urlVnPay" target="_blank"> Link </a>
+              <a id="urlVnPay" style="visibility: hidden" :href="this.urlVnPay" target="_self"> Link </a>
               <el-col :span="24" style="text-align: center">
                 <el-button
                   class="pay-button"
