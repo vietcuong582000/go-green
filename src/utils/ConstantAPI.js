@@ -51,8 +51,12 @@ export const ConstantAPI = {
   },
   'ORDER': {
     CREATE: {
-      url: `${API_DEFAULT}/order/create`,
+      url: `${API_DEFAULT}/home/order/create`,
       method: 'POST'
+    },
+    SEARCH: {
+      url: `${API_DEFAULT}/order/search`,
+      method: 'GET'
     }
   }
 }

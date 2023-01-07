@@ -47,6 +47,7 @@ export default {
   data() {
     return {
       status: '',
+      payload: '',
     }
   },
   mounted() {
@@ -56,6 +57,13 @@ export default {
     if(this.status === '00') {
       localStorage.removeItem("cart")
     }
+    this.payload = JSON.parse(localStorage.getItem('order'))
+    console.log(this.payload)
+    ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE, this.payload, {}).then(rs => {
+      console.log(rs)
+    }).catch(err => {
+      errAlert(this, 'Có lỗi xảy ra')
+    })
     console.log(this.status)
   },
   methods: {

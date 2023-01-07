@@ -89,9 +89,9 @@
           <el-form ref="form" :model="form" :rules="rules" label-width="150px" label-position="left">
             <el-row :gutter="20">
               <el-col :span="24">
-                <el-form-item label="Họ và tên" prop="customerName">
+                <el-form-item label="Họ và tên" prop="fullName">
                   <el-input
-                    v-model="form.customerName"
+                    v-model="form.fullName"
                     placeholder="Họ và tên"
                     maxlength="100"
                     :show-word-limit="true"
@@ -100,9 +100,9 @@
                 </el-form-item>
               </el-col>
               <el-col :span="24">
-                <el-form-item label="Địa chỉ" prop="customerAddress">
+                <el-form-item label="Địa chỉ" prop="shippingAddress">
                   <el-input
-                    v-model="form.customerAddress"
+                    v-model="form.shippingAddress"
                     placeholder="Địa chỉ"
                     maxlength="255"
                     :show-word-limit="true"
@@ -134,8 +134,8 @@
               </el-col>
               <el-col :span="24">
                 <el-form-item label="Hình thức thanh toán" prop="paymentMethod" label-width="170px">
-                  <el-radio v-model="form.paymentMethod" label="1">Thanh toán trực tiếp</el-radio>
-                  <el-radio v-model="form.paymentMethod" label="2">Thanh toán online <img style="height: 20px" src="../../../public/img/vnpay2.jpg" alt=""/></el-radio>
+                  <el-radio v-model="form.paymentMethod" label="COD">Thanh toán trực tiếp</el-radio>
+                  <el-radio v-model="form.paymentMethod" label="CREDIT_CARD">Thanh toán online <img style="height: 20px" src="../../../public/img/vnpay2.jpg" alt=""/></el-radio>
                 </el-form-item>
               </el-col>
               <a id="urlVnPay" style="visibility: hidden" :href="this.urlVnPay" target="_self"> Link </a>
@@ -185,6 +185,9 @@ import {formatCurrency} from "@/utils/Fomatter";
 import VueTitle from "@/components/VueTitle";
 import {requiredRule} from "@/utils/Validate";
 import sha265 from "sha256";
+import ApiFactory from "@/utils/apiFactory";
+import {ConstantAPI} from "@/utils/ConstantAPI";
+import {errAlert} from "@/utils/Alert";
 
 const FUNCTION_CODE = 'PRODUCT'
 export default {
@@ -201,18 +204,19 @@ export default {
       tableDataAll: [],
       isLoadingTable: true,
       form: {
-        customerName: '',
-        customerAddress: '',
+        fullName: '',
+        shippingAddress: '',
         customerNumber: '',
         customerEmail: '',
-        paymentMethod: '1',
+        paymentMethod: 'COD',
       },
       rules: {
-        customerName: requiredRule('Họ và tên'),
-        customerAddress: requiredRule('Địa chỉ'),
+        fullName: requiredRule('Họ và tên'),
+        shippingAddress: requiredRule('Địa chỉ'),
         customerNumber: requiredRule('Số điện thoại')
       },
-      urlVnPay: ''
+      urlVnPay: '',
+      payload: {}
     }
   },
   mounted() {
@@ -298,7 +302,25 @@ export default {
     onOrder() {
       this.$refs.form.validate(valid => {
         if(!valid) return
-        if(this.form.paymentMethod === '2') {
+        let orderDetails = []
+        this.tableData.forEach(item => {
+          orderDetails.push({
+            "quantityOrder": Number(item.quantity),
+            "productId": item.id
+          })
+        })
+        this.payload = {
+          "shippingAddress": this.form.shippingAddress,
+          "paymentMethod": this.form.paymentMethod,
+          "customerInfo": {
+            "fullName": this.form.fullName,
+            "phoneNumber": this.form.customerNumber,
+            "email": this.form.customerEmail
+          },
+          "orderDetails": orderDetails
+        }
+        localStorage.setItem('order', JSON.stringify(this.payload))
+        if(this.form.paymentMethod === 'CREDIT_CARD') {
           let urlVnPay = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
           let hashSecret = 'YTPTETIVKQJKEYPIDNKKDGQOKXYTSHDJ'
           let year = new Date().getFullYear()
@@ -348,6 +370,22 @@ export default {
           setTimeout(() => {
             document.getElementById('urlVnPay').click()
           }, 1000)
+        } else {
+          ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE, this.payload, {}).then(rs => {
+            this.$notify({
+              title: 'Tạo đơn hàng thành công',
+              dangerouslyUseHTMLString: true,
+              message: 'Đơn hàng của bạn đã được tạo và gửi cho hệ thống thành công',
+              type: 'success'
+            })
+            console.log('alo')
+            // this.$refs.form.reset()
+            localStorage.removeItem("cart")
+            this.tableData = []
+            this.$refs.form.resetFields()
+          }).catch(err => {
+            errAlert(this, 'Có lỗi xảy ra')
+          })
         }
       })
     }
