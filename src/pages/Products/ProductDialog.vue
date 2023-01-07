@@ -361,6 +361,7 @@ export default {
         if (this.formMode !== FORM_MODE.CREATE && val) {
           this.form = { ...this.detail }
           this.imgUrl = this.form.imgUrl
+          this.form.listOfCategory = this.detail.categories.map(item => item.id)
         }
       }
     }

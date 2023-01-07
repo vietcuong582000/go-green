@@ -9,88 +9,102 @@
       <el-form ref="form" :model="form" label-width="120px" label-position="left">
         <el-row :gutter="20">
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Mã sản phẩm">
-              <el-input v-model="form.productId" placeholder="Mã sản phẩm"></el-input>
+            <el-form-item label="Tên khách hàng">
+              <span>{{ form.customerInfo ? form.customerInfo.fullName : '' }}</span>
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Tên sản phẩm">
-              <el-input v-model="form.productName" placeholder="Tên sản phẩm"></el-input>
+            <el-form-item label="Địa chỉ">
+              <span>{{ form.shippingAddress }}</span>
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Đơn giá">
-              <money-input
-                :value.sync="form.productPrice"
-                placeholder="Đơn giá"
-                :max-length="'15'"
-                :prop="'productPrice'"
-                :show-limit="true"
-                :clearable="false"
-              />
+            <el-form-item label="Số điện thoại">
+              <span>{{ form.customerInfo ? form.customerInfo.phoneNumber : '' }}</span>
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Số lượng">
-              <el-input v-model="form.productQuantity" placeholder="Số lượng"></el-input>
+            <el-form-item label="Email">
+              <span>{{ form.customerInfo ? form.customerInfo.email : '' }}</span>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
+          <el-table
+            :data="tableData"
+            border
+            stripe
+            :summary-method="getSummaries"
+            show-summary
+            style="width: 100%">
+<!--            <el-table-column-->
+<!--              prop="stt"-->
+<!--              label="STT"-->
+<!--              width="75"-->
+<!--              header-align="center"-->
+<!--              align="center"-->
+<!--              type="index"-->
+<!--              :index="(i) => {return ((currentPage >= 1 ? currentPage - 1 : 0) * pageSize) + i + 1}">-->
+<!--            </el-table-column>-->
+            <el-table-column
+              prop="productName"
+              label="Tên sản phẩm"
+              header-align="center"
+              min-width="200"
+              :show-overflow-tooltip="true"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="productCode"
+              label="Mã sản phẩm"
+              header-align="center"
+              width="260"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              prop="quantityOrder"
+              label="Số lượng"
+              header-align="center"
+              width="180"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              prop="price"
+              label="Đơn giá"
+              header-align="center"
+              width="250"
+              :show-overflow-tooltip="true"
+              :formatter="(row, col, val) => formatCurrencyFunction(val)">
+            </el-table-column>
+            <el-table-column
+              prop="subTotal"
+              label="Tổng tiền"
+              header-align="center"
+              width="300"
+              :show-overflow-tooltip="true"
+              :formatter="(row, col, val) => formatCurrencyFunction(val)">
+            </el-table-column>
+          </el-table>
+        </el-row>
+        <el-row :gutter="20">
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Ngày nhập">
-              <el-date-picker
-                v-model="form.productImportDate"
-                type="date"
-                placeholder="Ngày nhập"
-                format="dd-MM-yyyy"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Ngày hết hạn">
-              <el-date-picker
-                v-model="form.productExpirationDate"
-                type="date"
-                placeholder="Ngày hết hạn"
-                format="dd-MM-yyyy"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Danh mục">
-              <el-select style="width: 100%" v-model="form.productCategory" placeholder="Danh mục">
-                <el-option
-                  v-for="item in listDanhMuc"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :xl="24" :lg="24" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Mô tả">
-              <el-input
-                v-model="form.productDescription"
-                placeholder="Mô tả"
-                type="textarea"
-                :rows="3">
-              </el-input>
+            <el-form-item label="Trạng thái đơn hàng" label-width="150px">
+              <span>{{ form.orderStatus }}</span>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </el-card>
     <span slot="footer">
-      <el-button type="success" @click="close">Lưu</el-button>
-      <el-button @click="close">Hủy</el-button>
+<!--      <el-button type="success" @click="close">Lưu</el-button>-->
+      <el-button @click="close">Đóng</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
 import MoneyInput from "../../components/Inputs/MoneyInput";
+import {formatCurrency} from "@/utils/Fomatter";
 
 export default {
   components: {
@@ -113,25 +127,26 @@ export default {
   data() {
     return {
       form: {...FORM_DEFAULT},
-      listDanhMuc: [
-        {
-          value: '1',
-          label: 'Trái cây'
-        },
-        {
-          value: '2',
-          label: 'Rau củ'
-        }
-      ],
+      tableData: [],
       dialogVisible: false
     };
   },
   watch: {
     isShowDialog() {
       this.form = { ...this.detail }
+      this.tableData = this.form.orderDetails
     }
   },
   methods: {
+    getSummaries(param) {
+      const sums = [];
+      sums[0] = 'Tổng tiền'
+      sums[1] = ''
+      sums[2] = ''
+      sums[3] = ''
+      sums[4] = this.formatCurrencyFunction(this.form.totalPrice)
+      return sums;
+    },
     clearForm() {
       this.form = {...FORM_DEFAULT}
     },
@@ -139,17 +154,17 @@ export default {
       this.clearForm()
       this.$emit('update:isShowDialog')
       this.$emit('close-dialog')
+    },
+    formatCurrencyFunction(number) {
+      return formatCurrency(number)
     }
   }
 };
 const FORM_DEFAULT = {
-  productId: '',
-  productName: '',
-  productCategory: '',
-  productPrice: '',
-  productQuantity: '',
-  productDescription: '',
-  productImportDate: '',
-  productExpirationDate: '',
+  customerInfo: {},
+  orderDetails: [],
+  shippingAddress: '',
+  orderStatus: '',
+  totalPrice: ''
 }
 </script>

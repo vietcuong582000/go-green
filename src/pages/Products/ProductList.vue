@@ -47,11 +47,12 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="idCategory"
+            prop="categories"
             label="Danh mục"
             :show-overflow-tooltip="true"
             header-align="center"
             width="120"
+            :formatter="(row, col, val) => formatCategory(val)"
           />
           <el-table-column
             prop="unitPrice"
@@ -243,6 +244,9 @@
       },
       formatCurrencyFunction(number) {
         return formatCurrency(number)
+      },
+      formatCategory(row, col, val) {
+        return row.map(item => item.name).join()
       },
       formatDate
     }

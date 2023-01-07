@@ -73,12 +73,12 @@
             fixed="right"
           >
             <template slot-scope="{row}">
-              <el-tooltip :content="'Sửa'" :open-delay="200" placement="top" effect="light">
+              <el-tooltip :content="'Xem chi tiết'" :open-delay="200" placement="top" effect="light">
                 <el-button
                   type="success"
                   size="small"
                   style="outline: none"
-                  icon="el-icon-edit"
+                  icon="el-icon-view"
                   circle
                   plain
                   @click="showDialog(FORM_MODE.EDIT, row)"
@@ -88,9 +88,9 @@
             </template>
           </el-table-column>
         </el-table>
-        <dialog-product
+        <dialog-order
           :is-show-dialog.sync="isShowDialog"
-          :detail.sync="productDetail"
+          :detail.sync="orderDetail"
           :title="dialogTitle"
           @close-dialog="onCloseDialog"
         />
@@ -115,7 +115,7 @@
 <script>
 import LTable from '@/components/Table.vue'
 import Card from '@/components/Cards/Card.vue'
-import DialogProduct from "./OrderDialog";
+import DialogOrder from "./OrderDialog";
 import {FORM_MODE} from "@/utils/Constant";
 import {formatCurrency} from "@/utils/Fomatter";
 import ApiFactory from "@/utils/apiFactory";
@@ -126,11 +126,11 @@ export default {
   components: {
     LTable,
     Card,
-    DialogProduct
+    DialogOrder
   },
   data () {
     return {
-      productDetail: {},
+      orderDetail: {},
       dialogTitle: '',
       isShowDialog: false,
       FORM_MODE,
@@ -162,14 +162,14 @@ export default {
     showDialog(formMode, row) {
       this.isShowDialog = true
       if(formMode === FORM_MODE.EDIT) {
-        this.productDetail = row
+        this.orderDetail = row
         this.dialogTitle = `SỬA THÔNG TIN SẢN PHẨM`
       } else {
         this.dialogTitle = `THÊM MỚI SẢN PHẨM`
       }
     },
     onCloseDialog() {
-      this.productDetail = {}
+      this.orderDetail = {}
     },
     handleCurrentChange(val) {
       this.currentPage = val
