@@ -110,9 +110,9 @@ const routes = [
         meta: { authRequired: true }
       },
       {
-        path: 'notifications',
-        name: 'Notifications',
-        component: Notifications,
+        path: 'icons',
+        name: 'Icons',
+        component: Icons,
         meta: { authRequired: true }
       },
       {

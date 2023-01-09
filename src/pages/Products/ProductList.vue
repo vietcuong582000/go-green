@@ -3,9 +3,41 @@
     <vue-title title="GoGreen - Quản lý sản phẩm"></vue-title>
     <div class="container-fluid">
       <el-card :header="'DANH SÁCH SẢN PHẨM'">
-        <el-button type="success" style="margin-bottom: 20px; outline: none" icon="el-icon-plus" @click="showDialog(FORM_MODE.CREATE)">
-          Thêm mới sản phẩm
-        </el-button>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-button type="success" style="margin-bottom: 20px; outline: none" icon="el-icon-plus" @click="showDialog(FORM_MODE.CREATE)">
+              Thêm mới sản phẩm
+            </el-button>
+          </el-col>
+          <el-col :span="6">
+            <el-select
+              :disabled="formMode === FORM_MODE.DELETE"
+              v-model="keywordCategory"
+              placeholder="Danh mục"
+              style="width: 100%"
+              @change="onChangeCategory"
+            >
+              <el-option
+                v-for="item in listDanhMuc"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="6">
+            <el-input
+              v-model="keywordSearch"
+              placeholder="Tìm kiếm sản phẩm"
+              maxlength="225"
+              @input="searchProduct"
+            >
+              <i class="el-icon-search el-input__icon" slot="prefix">
+              </i>
+            </el-input>
+          </el-col>
+        </el-row>
         <el-table
           v-loading="isLoadingTable"
           :data="tableData"
@@ -82,6 +114,7 @@
             :show-overflow-tooltip="true"
             header-align="center"
             align="center"
+            sortable
             :formatter="(row, col, val) => formatDate(val)"
             width="150"
           />
@@ -91,6 +124,7 @@
             :show-overflow-tooltip="true"
             header-align="center"
             align="center"
+            sortable
             :formatter="(row, col, val) => formatDate(val)"
             width="150"
           />
@@ -196,15 +230,20 @@
         tableData: [],
         tableDataAll: [],
         isLoadingTable: true,
+        keywordSearch: '',
+        keywordCategory: '',
+        listDanhMuc: [],
+        timeout: null,
       }
     },
     mounted() {
       this.getListProduct()
+      this.getListCategory()
     },
     methods: {
       getListProduct() {
         this.isLoadingTable = true
-        ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, '').then(rs => {
+        ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, this.keywordSearch ? { keyword: this.keywordSearch } : {}).then(rs => {
           this.tableDataAll = rs.response_data.data
           this.handleCurrentChange(1)
           this.pageSize = 10
@@ -212,6 +251,13 @@
           this.isLoadingTable = false
         }).catch(err => {
           errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')
+        })
+      },
+      getListCategory() {
+        ApiFactory.callAPI(ConstantAPI['CATEGORY'].GET, {}, '').then(rs => {
+          this.listDanhMuc = rs.response_data.data
+        }).catch(err => {
+          errAlert(this, 'Lỗi khi lấy danh mục sản phẩm')
         })
       },
       showDialog(formMode, row) {
@@ -229,6 +275,15 @@
             this.dialogTitle = 'XÓA SẢN PHẨM'
             break
         }
+      },
+      searchProduct() {
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.getListProduct(this.keywordSearch)
+        }, 300)
+      },
+      onChangeCategory() {
+
       },
       onCloseDialog() {
         this.productDetail = {}

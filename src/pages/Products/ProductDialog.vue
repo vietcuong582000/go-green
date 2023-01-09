@@ -339,11 +339,11 @@ export default {
       ],
       listTrangThai: [
         {
-          value: '0',
+          value: 1,
           label: 'Hoạt động'
         },
         {
-          value: '1',
+          value: 0,
           label: 'Không hoạt động'
         }
       ],
@@ -359,9 +359,11 @@ export default {
       deep: true,
       handler(val) {
         if (this.formMode !== FORM_MODE.CREATE && val) {
-          this.form = { ...this.detail }
+          this.form = { ...this.detail, listOfCategory: [] }
           this.imgUrl = this.form.imgUrl
-          this.form.listOfCategory = this.detail.categories.map(item => item.id)
+          this.form.categories.forEach(item => {
+            this.form.listOfCategory.push(item.id)
+          })
         }
       }
     }
@@ -519,7 +521,7 @@ const FORM_DEFAULT = {
   expirationDate: new Date(),
   discount: '',
   discountedPrice: '',
-  status: '0',
+  status: 1,
   imgUrl: ''
 }
 </script>

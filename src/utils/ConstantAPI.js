@@ -29,6 +29,10 @@ export const ConstantAPI = {
     DELETE: {
       url: `${API_DEFAULT}/product/delete`,
       method: 'GET'
+    },
+    GET_LIST_EXPIRED: {
+      url: `${API_DEFAULT}/product/list-order-by-expiration-date`,
+      method: 'GET'
     }
   },
   'CATEGORY': {
@@ -55,6 +59,10 @@ export const ConstantAPI = {
       method: 'POST'
     },
     SEARCH: {
+      url: `${API_DEFAULT}/order/search`,
+      method: 'GET'
+    },
+    SEARCH_LIST_STATUS: {
       url: `${API_DEFAULT}/order/search`,
       method: 'GET'
     }

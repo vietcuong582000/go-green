@@ -3,9 +3,24 @@
     <vue-title title="GoGreen - Danh mục sản phẩm"></vue-title>
     <div class="container-fluid">
       <el-card :header="'DANH MỤC SẢN PHẨM'">
-        <el-button type="success" style="margin-bottom: 20px; outline: none" icon="el-icon-plus" @click="showDialog(FORM_MODE.CREATE)">
-          Thêm mới danh mục
-        </el-button>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-button type="success" style="margin-bottom: 20px; outline: none" icon="el-icon-plus" @click="showDialog(FORM_MODE.CREATE)">
+              Thêm mới danh mục
+            </el-button>
+          </el-col>
+          <el-col :span="12">
+            <el-input
+              v-model="keywordSearch"
+              placeholder="Tìm kiếm sản phẩm"
+              maxlength="225"
+              @input="searchCategory"
+            >
+              <i class="el-icon-search el-input__icon" slot="prefix">
+              </i>
+            </el-input>
+          </el-col>
+        </el-row>
         <el-table
           :data="tableData"
           border
@@ -125,7 +140,9 @@ export default {
       tableData: [],
       tableDataAll: [],
       isLoadingTable: true,
-      formMode: null
+      formMode: null,
+      keywordSearch: '',
+      timeout: null,
     }
   },
   mounted() {
@@ -134,7 +151,7 @@ export default {
   methods: {
     getListCategory() {
       this.isLoadingTable = true
-      ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, '').then(rs => {
+      ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, this.keywordSearch ? { keyword: this.keywordSearch } : {}).then(rs => {
         this.tableDataAll = rs.response_data.data
         this.handleCurrentChange(1)
         this.pageSize = 10
@@ -159,6 +176,12 @@ export default {
           this.dialogTitle = 'XÓA DANH MỤC'
           break
       }
+    },
+    searchCategory() {
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        this.getListCategory(this.keywordSearch)
+      }, 300)
     },
     onCloseDialog() {
       this.productDetail = {}
