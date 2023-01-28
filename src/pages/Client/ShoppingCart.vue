@@ -356,7 +356,7 @@ export default {
             vnp_OrderType: 'other',
             vnp_ReturnUrl: 'http%3A%2F%2Flocalhost%3A8080%2F%23%2Fpayment-status',
             vnp_TmnCode: 'TKFPLOQ4',
-            vnp_TxnRef: '' + year + month + date + hour + minute + second,
+            vnp_TxnRef: '' + year + month + date + hour + minute + second + new Date().getMilliseconds(),
             vnp_Version: '2.1.0',
           }
           let strParam = Object.keys(params).map(function(key) {

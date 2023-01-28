@@ -130,7 +130,6 @@
         />
         <order-create
           :is-show-dialog-create.sync="isShowDialogCreate"
-          :detail.sync="orderDetail"
           @close-dialog="onCloseDialog"
           @save-success="getListOrders"
         />
