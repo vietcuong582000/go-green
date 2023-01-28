@@ -371,7 +371,7 @@ export default {
             document.getElementById('urlVnPay').click()
           }, 1000)
         } else {
-          ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE, this.payload, {}).then(rs => {
+          ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE_HOME, this.payload, {}).then(rs => {
             this.$notify({
               title: 'Tạo đơn hàng thành công',
               dangerouslyUseHTMLString: true,

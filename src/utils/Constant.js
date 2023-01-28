@@ -9,3 +9,9 @@ export const FORM_MODE = {
   APPROVE: 4,
   DELETE: 5
 }
+
+export const PAYMENT_METHOD = {
+  COD: 'Thanh toán trực tiếp' ,
+  CREDIT_CARD: 'Thanh toán online',
+  CHECKOUT_COUNTER: 'Thanh toán tại quầy'
+}

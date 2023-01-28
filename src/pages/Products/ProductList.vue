@@ -15,7 +15,7 @@
               v-model="keywordCategory"
               placeholder="Danh mục"
               style="width: 100%"
-              @change="onChangeCategory"
+              @change="getListProduct()"
             >
               <el-option
                 v-for="item in listDanhMuc"
@@ -243,7 +243,14 @@
     methods: {
       getListProduct() {
         this.isLoadingTable = true
-        ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET, {}, this.keywordSearch ? { keyword: this.keywordSearch } : {}).then(rs => {
+        const param = {}
+        if (this.keywordSearch) {
+          param.keyword = this.keywordSearch
+        }
+        if (this.keywordCategory) {
+          param.categoryId = this.keywordCategory
+        }
+        ApiFactory.callAPI(ConstantAPI[FUNCTION_CODE].GET_LIST_WITH_KEY_AND_CATEGORY, {}, param).then(rs => {
           this.tableDataAll = rs.response_data.data
           this.handleCurrentChange(1)
           this.pageSize = 10
@@ -256,6 +263,7 @@
       getListCategory() {
         ApiFactory.callAPI(ConstantAPI['CATEGORY'].GET, {}, '').then(rs => {
           this.listDanhMuc = rs.response_data.data
+          this.listDanhMuc.unshift({ id: '', name: "Tất cả" })
         }).catch(err => {
           errAlert(this, 'Lỗi khi lấy danh mục sản phẩm')
         })
@@ -279,11 +287,8 @@
       searchProduct() {
         if (this.timeout) clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
-          this.getListProduct(this.keywordSearch)
+          this.getListProduct()
         }, 300)
-      },
-      onChangeCategory() {
-
       },
       onCloseDialog() {
         this.productDetail = {}

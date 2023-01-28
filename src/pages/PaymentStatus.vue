@@ -59,7 +59,7 @@ export default {
     }
     this.payload = JSON.parse(localStorage.getItem('order'))
     console.log(this.payload)
-    ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE, this.payload, {}).then(rs => {
+    ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE_HOME, this.payload, {}).then(rs => {
       console.log(rs)
     }).catch(err => {
       errAlert(this, 'Có lỗi xảy ra')

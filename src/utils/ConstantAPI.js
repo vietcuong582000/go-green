@@ -33,6 +33,10 @@ export const ConstantAPI = {
     GET_LIST_EXPIRED: {
       url: `${API_DEFAULT}/product/list-order-by-expiration-date`,
       method: 'GET'
+    },
+    GET_LIST_WITH_KEY_AND_CATEGORY: {
+      url: `${API_DEFAULT}/product/search-with-category`,
+      method: 'GET'
     }
   },
   'CATEGORY': {
@@ -54,8 +58,12 @@ export const ConstantAPI = {
     }
   },
   'ORDER': {
-    CREATE: {
+    CREATE_HOME: {
       url: `${API_DEFAULT}/home/order/create`,
+      method: 'POST'
+    },
+    CREATE: {
+      url: `${API_DEFAULT}/order/create`,
       method: 'POST'
     },
     SEARCH: {
@@ -63,7 +71,7 @@ export const ConstantAPI = {
       method: 'GET'
     },
     SEARCH_LIST_STATUS: {
-      url: `${API_DEFAULT}/order/search`,
+      url: `${API_DEFAULT}/order/list-order-status`,
       method: 'GET'
     }
   }

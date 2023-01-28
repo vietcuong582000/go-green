@@ -2,9 +2,24 @@
   <div class="content">
     <div class="container-fluid">
       <el-card :header="'Danh sách đơn hàng'">
-<!--        <el-button type="success" style="margin-bottom: 20px; outline: none" icon="el-icon-plus" @click="showDialog(FORM_MODE.CREATE)">-->
-<!--          Thêm mới sản phẩm-->
-<!--        </el-button>-->
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-button type="success" style="margin-bottom: 20px; outline: none" icon="el-icon-plus" @click="showDialogCreate()">
+              Thêm mới đơn hàng
+            </el-button>
+          </el-col>
+          <el-col :span="12">
+            <el-input
+              v-model="keywordSearch"
+              placeholder="Tìm kiếm sản phẩm"
+              maxlength="225"
+              @input="searchCategory"
+            >
+              <i class="el-icon-search el-input__icon" slot="prefix">
+              </i>
+            </el-input>
+          </el-col>
+        </el-row>
         <el-table
           :data="tableData"
           border
@@ -51,6 +66,25 @@
             :formatter="(row, col, val) => row.customerInfo.email">
           </el-table-column>
           <el-table-column
+            prop="createdDate"
+            label="Ngày tạo"
+            header-align="center"
+            width="180"
+            :show-overflow-tooltip="true"
+            align="center"
+            sortable
+            :formatter="(row, col, val) => formatDate(val)">
+          </el-table-column>
+          <el-table-column
+            prop="paymentMethod"
+            label="Hình thức thanh toán"
+            header-align="center"
+            width="180"
+            :show-overflow-tooltip="true"
+            :formatter="(row, col, val) => PAYMENT_METHOD[val]"
+          >
+          </el-table-column>
+          <el-table-column
             prop="orderStatus"
             label="Trạng thái đơn hàng"
             header-align="center"
@@ -81,7 +115,7 @@
                   icon="el-icon-view"
                   circle
                   plain
-                  @click="showDialog(FORM_MODE.EDIT, row)"
+                  @click="showDialog(row)"
                 >
                 </el-button>
               </el-tooltip>
@@ -91,8 +125,14 @@
         <dialog-order
           :is-show-dialog.sync="isShowDialog"
           :detail.sync="orderDetail"
-          :title="dialogTitle"
           @close-dialog="onCloseDialog"
+          @save-success="getListOrders"
+        />
+        <order-create
+          :is-show-dialog-create.sync="isShowDialogCreate"
+          :detail.sync="orderDetail"
+          @close-dialog="onCloseDialog"
+          @save-success="getListOrders"
         />
         <el-pagination
           :current-page.sync="currentPage"
@@ -116,8 +156,9 @@
 import LTable from '@/components/Table.vue'
 import Card from '@/components/Cards/Card.vue'
 import DialogOrder from "./OrderDialog";
-import {FORM_MODE} from "@/utils/Constant";
-import {formatCurrency} from "@/utils/Fomatter";
+import OrderCreate from "@/pages/Orders/OrderCreate";
+import {FORM_MODE, PAYMENT_METHOD} from "@/utils/Constant";
+import {formatCurrency, formatDate} from "@/utils/Fomatter";
 import ApiFactory from "@/utils/apiFactory";
 import {ConstantAPI} from "@/utils/ConstantAPI";
 import {errAlert} from "@/utils/Alert";
@@ -126,14 +167,16 @@ export default {
   components: {
     LTable,
     Card,
-    DialogOrder
+    DialogOrder,
+    OrderCreate
   },
   data () {
     return {
       orderDetail: {},
-      dialogTitle: '',
       isShowDialog: false,
+      isShowDialogCreate: false,
       FORM_MODE,
+      PAYMENT_METHOD,
       currentPage: 1,
       pageSize: 10,
       pageSizes: [5, 10, 20, 50, 100],
@@ -141,6 +184,7 @@ export default {
       tableData: [],
       tableDataAll: [],
       isLoadingTable: true,
+      keywordSearch: ''
     }
   },
   mounted() {
@@ -159,14 +203,12 @@ export default {
         errAlert(this, 'Lỗi khi lấy danh sách đơn hàng')
       })
     },
-    showDialog(formMode, row) {
+    showDialog(row) {
       this.isShowDialog = true
-      if(formMode === FORM_MODE.EDIT) {
-        this.orderDetail = row
-        this.dialogTitle = `SỬA THÔNG TIN SẢN PHẨM`
-      } else {
-        this.dialogTitle = `THÊM MỚI SẢN PHẨM`
-      }
+      this.orderDetail = row
+    },
+    showDialogCreate() {
+      this.isShowDialogCreate = true
     },
     onCloseDialog() {
       this.orderDetail = {}
@@ -182,7 +224,11 @@ export default {
     },
     formatCurrencyFunction(number) {
       return formatCurrency(number)
-    }
+    },
+    searchCategory() {
+
+    },
+    formatDate
   }
 }
 </script>
