@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-      <el-card :header="'Danh sách đơn hàng'">
+      <el-card :header="'DANH SÁCH ĐƠN HÀNG'">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-button type="success" style="margin-bottom: 20px; outline: none" icon="el-icon-plus" @click="showDialogCreate()">

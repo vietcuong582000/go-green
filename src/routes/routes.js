@@ -23,6 +23,7 @@ import VueRouter from 'vue-router'
 import ShoppingCart from "@/pages/Client/ShoppingCart";
 import HomeProductList from "@/pages/Client/HomeProductList";
 import PaymentStatus from "@/pages/PaymentStatus";
+import StatisticalMain from "@/pages/Statistical/StatisticalMain";
 
 const routes = [
   {
@@ -95,6 +96,12 @@ const routes = [
         path: 'category-list',
         name: 'Danh mục sản phẩm',
         component: CategoryList,
+        meta: { authRequired: true }
+      },
+      {
+        path: 'statiscal',
+        name: 'Thống kê',
+        component: StatisticalMain,
         meta: { authRequired: true }
       },
       {

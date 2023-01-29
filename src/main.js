@@ -43,6 +43,12 @@ Vue.use(VueRouter)
 Vue.use(LightBootstrap)
 Vue.use(ElementUI, { locale, size: 'medium' })
 
+// ApexChart
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts)
+
+Vue.component('apexchart', VueApexCharts)
+
 // configure router
 const router = new VueRouter({
   routes, // short for routes: routes

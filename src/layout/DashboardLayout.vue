@@ -26,7 +26,7 @@
 <!--        <i class="nc-icon nc-circle-09"></i>-->
 <!--        <p>Danh sách khách hàng</p>-->
 <!--      </sidebar-link>-->
-      <sidebar-link to="/admin/icons">
+      <sidebar-link to="/admin/statiscal">
         <i class="nc-icon nc-chart-bar-32"></i>
         <p>Thống kê</p>
       </sidebar-link>

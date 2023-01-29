@@ -37,6 +37,10 @@ export const ConstantAPI = {
     GET_LIST_WITH_KEY_AND_CATEGORY: {
       url: `${API_DEFAULT}/product/search-with-category`,
       method: 'GET'
+    },
+    GET_HOT_PRODUCT: {
+      url: `${API_DEFAULT}/product/get-hot-product`,
+      method: 'GET'
     }
   },
   'CATEGORY': {
@@ -72,6 +76,10 @@ export const ConstantAPI = {
     },
     SEARCH_LIST_STATUS: {
       url: `${API_DEFAULT}/order/list-order-status`,
+      method: 'GET'
+    },
+    GET_LIST_BY_DATE: {
+      url: `${API_DEFAULT}/order/list-order-by-date`,
       method: 'GET'
     }
   }
