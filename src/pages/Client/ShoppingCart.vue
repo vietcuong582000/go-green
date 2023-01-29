@@ -183,7 +183,7 @@
 <script>
 import {formatCurrency} from "@/utils/Fomatter";
 import VueTitle from "@/components/VueTitle";
-import {requiredRule} from "@/utils/Validate";
+import {emailRule, phoneRule, requiredRule} from "@/utils/Validate";
 import sha265 from "sha256";
 import ApiFactory from "@/utils/apiFactory";
 import {ConstantAPI} from "@/utils/ConstantAPI";
@@ -213,7 +213,8 @@ export default {
       rules: {
         fullName: requiredRule('Họ và tên'),
         shippingAddress: requiredRule('Địa chỉ'),
-        customerNumber: requiredRule('Số điện thoại')
+        customerNumber: [requiredRule('Số điện thoại'), phoneRule('Số điện thoại')],
+        customerEmail: [requiredRule('Email'), emailRule('Email')]
       },
       urlVnPay: '',
       payload: {}

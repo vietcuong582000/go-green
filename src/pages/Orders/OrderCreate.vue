@@ -6,7 +6,7 @@
     :close-on-click-modal="false"
     @close="close">
     <el-card shadow="never">
-      <el-form ref="form" :model="form" label-width="160px" label-position="left">
+      <el-form ref="form" :model="form" :rules="rules" label-width="160px" label-position="left">
         <el-row :gutter="20">
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
             <el-form-item label="Họ và tên" prop="fullName">
@@ -129,7 +129,7 @@
         </el-row>
         <el-row :gutter="20" style="margin-top: 20px">
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Trạng thái đơn hàng" label-width="150px">
+            <el-form-item label="Trạng thái đơn hàng" prop="orderStatus" label-width="160px">
               <el-select style="width: 100%" v-model="form.orderStatus" placeholder="Trạng thái đơn hàng">
                 <el-option
                   v-for="item in listOrderStatus"
@@ -162,6 +162,7 @@ import ApiFactory from "@/utils/apiFactory";
 import {ConstantAPI} from "@/utils/ConstantAPI";
 import AddProduct from "@/pages/Orders/AddProduct";
 import {errAlert, showAlert, SUCCESS} from "@/utils/Alert";
+import {emailRule, phoneRule, requiredRule} from "@/utils/Validate";
 
 export default {
   components: {
@@ -177,6 +178,13 @@ export default {
   data() {
     return {
       form: {...FORM_DEFAULT},
+      rules: {
+        fullName: requiredRule('Họ và tên'),
+        shippingAddress: requiredRule('Địa chỉ'),
+        customerNumber: [requiredRule('Số điện thoại'), phoneRule('Số điện thoại')],
+        customerEmail: [requiredRule('Email'), emailRule('Email')],
+        orderStatus: requiredRule('Trạng thái đơn hàng')
+      },
       tableData: [],
       listOrderStatus: [],
       isShowDialogAddProduct: false,
@@ -211,40 +219,47 @@ export default {
       })
     },
     onSave() {
-      let orderDetails = []
-      this.tableData.forEach(item => {
-        if(item.productName !== 'Tổng tiền') {
-          orderDetails.push({
-            "productId": item.productId,
-            "quantityOrder": item.quantityOrder,
-          })
-        }
-      })
-      orderDetails.forEach((item) => {
-        item.quantityOrder = Number(item.quantityOrder)
-      })
-      this.payload = {
-        "shippingAddress": this.form.shippingAddress,
-        "paymentMethod": 'COD',
-        "orderStatus": this.form.orderStatus,
-        "customerInfo": {
-          "fullName": this.form.fullName,
-          "phoneNumber": this.form.customerNumber,
-          "email": this.form.customerEmail
-        },
-        "orderDetails": orderDetails
+      if(!this.tableData || this.tableData.length === 0) {
+        errAlert(this, 'Hãy thêm sản phẩm vào đơn hàng')
+        return
       }
-      ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE, this.payload, {}).then(rs => {
-        this.$notify({
-          title: 'Tạo đơn hàng thành công',
-          dangerouslyUseHTMLString: true,
-          message: 'Đơn hàng đã được tạo thành công',
-          type: 'success'
+      this.$refs.form.validate(valid => {
+        if (!valid) return
+        let orderDetails = []
+        this.tableData.forEach(item => {
+          if (item.productName !== 'Tổng tiền') {
+            orderDetails.push({
+              "productId": item.productId,
+              "quantityOrder": item.quantityOrder,
+            })
+          }
         })
-        this.close()
-        this.$emit('save-success')
-      }).catch(err => {
-        errAlert(this, 'Có lỗi xảy ra')
+        orderDetails.forEach((item) => {
+          item.quantityOrder = Number(item.quantityOrder)
+        })
+        this.payload = {
+          "shippingAddress": this.form.shippingAddress,
+          "paymentMethod": 'COD',
+          "orderStatus": this.form.orderStatus,
+          "customerInfo": {
+            "fullName": this.form.fullName,
+            "phoneNumber": this.form.customerNumber,
+            "email": this.form.customerEmail
+          },
+          "orderDetails": orderDetails
+        }
+        ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE, this.payload, {}).then(rs => {
+          this.$notify({
+            title: 'Tạo đơn hàng thành công',
+            dangerouslyUseHTMLString: true,
+            message: 'Đơn hàng đã được tạo thành công',
+            type: 'success'
+          })
+          this.close()
+          this.$emit('save-success')
+        }).catch(err => {
+          errAlert(this, 'Có lỗi xảy ra')
+        })
       })
     },
     showDialogAddProduct() {
