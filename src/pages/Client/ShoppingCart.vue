@@ -44,7 +44,7 @@
                         @change="onChangeQuantity"
                       />
                   </div>
-                  <div>Đơn giá: {{ formatCurrencyFunction(row.unitPrice) }}</div>
+                  <div>Đơn giá: {{ formatCurrencyFunction(row.discountedPrice) }}</div>
                 </div>
               </div>
             </template>
@@ -55,7 +55,7 @@
             :show-overflow-tooltip="true"
             header-align="center"
             width="100"
-            :formatter="(row, col, val) => formatCurrencyFunction(row.unitPrice * row.quantity)"
+            :formatter="(row, col, val) => formatCurrencyFunction(row.discountedPrice * row.quantity)"
           />
           <el-table-column
             label="Thao tác"
@@ -240,7 +240,7 @@ export default {
   computed: {
     totalPrice() {
       const tongTien = this.tableData.reduce((acc, cur) => {
-        return acc + (cur.unitPrice * cur.quantity)
+        return acc + (cur.discountedPrice * cur.quantity)
       }, 0)
       return tongTien
     }
@@ -294,7 +294,7 @@ export default {
       sums[0] = ''
       sums[1] = 'Tổng tiền'
       const tongTien = this.tableData.reduce((acc, cur) => {
-        return acc + (cur.unitPrice * cur.quantity)
+        return acc + (cur.discountedPrice * cur.quantity)
       }, 0)
       sums[2] = this.formatCurrencyFunction(tongTien)
       return sums;

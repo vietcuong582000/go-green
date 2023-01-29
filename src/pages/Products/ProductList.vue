@@ -83,7 +83,7 @@
             label="Danh mục"
             :show-overflow-tooltip="true"
             header-align="center"
-            width="120"
+            width="180"
             :formatter="(row, col, val) => formatCategory(val)"
           />
           <el-table-column
