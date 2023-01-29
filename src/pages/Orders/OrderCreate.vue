@@ -66,15 +66,15 @@
             border
             stripe
             style="width: 100%">
-            <!--            <el-table-column-->
-            <!--              prop="stt"-->
-            <!--              label="STT"-->
-            <!--              width="75"-->
-            <!--              header-align="center"-->
-            <!--              align="center"-->
-            <!--              type="index"-->
-            <!--              :index="(i) => {return ((currentPage >= 1 ? currentPage - 1 : 0) * pageSize) + i + 1}">-->
-            <!--            </el-table-column>-->
+            <el-table-column
+              prop="stt"
+              label="STT"
+              width="75"
+              header-align="center"
+              align="center"
+              type="index"
+              :index="(i) => {return i + 1}">
+            </el-table-column>
             <el-table-column
               prop="productName"
               label="Tên sản phẩm"
@@ -91,11 +91,24 @@
               :show-overflow-tooltip="true">
             </el-table-column>
             <el-table-column
-              prop="quantityOrder"
+              prop="quantityOrderClone"
               label="Số lượng"
               header-align="center"
               width="180"
               :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
+                <el-input
+                  v-if="!row.notShowInputQuantity"
+                  v-model="row.quantityOrder"
+                  style="width: 80px"
+                  placeholder="Số lượng"
+                  maxlength="5"
+                  type="number"
+                  size="mini"
+                  :show-word-limit="true"
+                  @input="onChangeQuantity(row)"
+                />
+              </template>
             </el-table-column>
             <el-table-column
               prop="discountedPrice"
@@ -174,8 +187,12 @@ export default {
   computed: {
     totalPrice() {
       const tongTien = this.tableData.reduce((acc, cur) => {
-        return acc + (cur.discountedPrice * cur.quantityOrder)
+        if(cur.productName === 'Tổng tiền') {
+          return acc
+        }
+        return acc + (Number(cur.discountedPrice) * Number(cur.quantityOrder))
       }, 0)
+      console.log(tongTien)
       return tongTien
     }
   },
@@ -195,7 +212,17 @@ export default {
     },
     onSave() {
       let orderDetails = []
-      orderDetails = this.tableData
+      this.tableData.forEach(item => {
+        if(item.productName !== 'Tổng tiền') {
+          orderDetails.push({
+            "productId": item.productId,
+            "quantityOrder": item.quantityOrder,
+          })
+        }
+      })
+      orderDetails.forEach((item) => {
+        item.quantityOrder = Number(item.quantityOrder)
+      })
       this.payload = {
         "shippingAddress": this.form.shippingAddress,
         "paymentMethod": 'COD',
@@ -223,19 +250,35 @@ export default {
     showDialogAddProduct() {
       this.isShowDialogAddProduct = true
     },
+    onChangeQuantity(row) {
+      if(row.quantityOrder < 1) {
+        row.quantityOrder = 1
+      }
+      this.tableData.forEach((item, index) => {
+        if(index === this.tableData.length - 1) {
+          item.subTotal = this.formatCurrencyFunction(Number(this.totalPrice))
+        } else {
+          item.subTotal = this.formatCurrencyFunction(item.discountedPrice * item.quantityOrder)
+        }
+      })
+      console.log(this.tableData)
+    },
     onAddProduct(val) {
       console.log(val)
-      val.forEach(item => {
-        item.productId = item.id
-        item.quantityOrder = 1
-        item.subTotal = this.formatCurrencyFunction(item.discountedPrice * item.quantityOrder)
+      const cloneVal = JSON.parse(JSON.stringify(val));
+      cloneVal.forEach(item => {
         this.tableData.push(item)
       })
-      this.tableData = [ ...this.tableData, {
+      this.tableData.forEach((item, index) => {
+        if(item.productName === 'Tổng tiền') {
+          this.tableData.splice(index, 1)
+        }
+      })
+      this.tableData.push({
         productName: 'Tổng tiền',
         price: '',
-        subTotal: this.formatCurrencyFunction(this.totalPrice)
-      }]
+        subTotal: this.formatCurrencyFunction(this.totalPrice),
+        notShowInputQuantity: true })
       console.log(this.tableData)
     },
     clearForm() {

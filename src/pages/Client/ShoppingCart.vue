@@ -41,7 +41,7 @@
                         type="number"
                         size="mini"
                         :show-word-limit="true"
-                        @change="onChangeQuantity"
+                        @change="onChangeQuantity(row)"
                       />
                   </div>
                   <div>Đơn giá: {{ formatCurrencyFunction(row.discountedPrice) }}</div>
@@ -273,7 +273,10 @@ export default {
     //     })
     //   })
     // },
-    onChangeQuantity() {
+    onChangeQuantity(row) {
+      if(row.quantity < 1) {
+        row.quantity = 1
+      }
       localStorage.setItem('cart', JSON.stringify(this.tableData))
     },
     onDelete(index, row) {
