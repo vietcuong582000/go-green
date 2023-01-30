@@ -81,6 +81,10 @@ export const ConstantAPI = {
     GET_LIST_BY_DATE: {
       url: `${API_DEFAULT}/order/list-order-by-date`,
       method: 'GET'
+    },
+    GET_SALES_ORDER: {
+      url: `${API_DEFAULT}/order/sales-order`,
+      method: 'GET'
     }
   }
 }

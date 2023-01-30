@@ -103,6 +103,7 @@
                 format="dd-MM-yyyy"
                 style="width: 100%"
                 :disabled="formMode === FORM_MODE.DELETE"
+                @change="onChangeDate"
               />
             </el-form-item>
           </el-col>
@@ -316,7 +317,7 @@ export default {
         quantity: [requiredRule('Số lượng'), numberRule('Số lượng')],
         description: [requiredRule('Mô tả')],
         importDate: [requiredRule('Ngày nhập')],
-        expirationDate: [requiredRule('Ngày hết hạn')],
+        expirationDate: [requiredRule('Ngày hết hạn'), { validator: this.validateExpiredDate, trigger: ['change', 'blur'] }],
         discount: [numberRule('Tỉ lệ giảm giá')],
         discountedPrice: [numberRule('Đơn giá đã giảm'), { validator: this.validateDiscountPrice, trigger: ['change', 'blur'] }],
         status: [requiredRule('Trạng thái')],
@@ -492,6 +493,17 @@ export default {
       this.clearForm()
       this.$emit('update:isShowDialog')
       this.$emit('close-dialog')
+    },
+    onChangeDate() {
+      this.$refs.form.validateField('expirationDate')
+    },
+    validateExpiredDate(rule, value, callback) {
+      if(new Date(this.form.importDate) > new Date(this.form.expirationDate)) {
+        callback(new Error(`Ngày hết hạn không được nhỏ hơn ngày nhập`))
+      }
+      // if(new Date(this.form.expirationDate) < new Date()) {
+      //   callback(new Error(`Ngày hết hạn không được nhỏ hơn ngày hiện tại`))
+      // }
     },
     validateUnitPrice(rule, value, callback) {
       if (Number(this.form.unitPrice) < Number(this.form.discountedPrice)) {

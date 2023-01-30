@@ -41,11 +41,12 @@
         </el-form>
         <div style="width: 100%; text-align: center; margin-bottom: 20px">
           <el-button type="success" @click="onSearch">Thống kê</el-button>
+          <el-button type="default" @click="onClose">Đóng thống kê</el-button>
         </div>
         <div id="chart" class="col-md-12">
-          <card>
-            <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
-          </card>
+          <top-product-chart ref="topProduct" v-show="isShowTopProduct" :date-statistical="form.dateStatistical" ></top-product-chart>
+          <sales-chart ref="sales" v-show="isShowSales" :date-statistical="form.dateStatistical"></sales-chart>
+          <sales-chart-year ref="salesYear" v-show="isShowSalesYear" :date-statistical="form.dateStatistical"></sales-chart-year>
         </div>
       </el-card>
     </div>
@@ -60,19 +61,26 @@
 import LTable from '@/components/Table.vue'
 import Card from '@/components/Cards/Card.vue'
 import VueTitle from "@/components/VueTitle";
-import ApiFactory from "@/utils/apiFactory";
-import {ConstantAPI} from "@/utils/ConstantAPI";
 import {requiredRule} from "@/utils/Validate";
+import TopProductChart from "@/pages/Statistical/TopProductChart";
+import SalesChart from "@/pages/Statistical/SalesChart";
+import SalesChartYear from "@/pages/Statistical/SalesChartYear";
 
 const FUNCTION_CODE = 'CATEGORY'
 export default {
   components: {
     LTable,
     Card,
-    VueTitle
+    VueTitle,
+    TopProductChart,
+    SalesChart,
+    SalesChartYear
   },
   data () {
     return {
+      isShowTopProduct: false,
+      isShowSales: false,
+      isShowSalesYear: false,
       form: {
         typeStatistical: 'topProduct',
         dateStatistical: ''
@@ -119,84 +127,6 @@ export default {
           label: 'Năm nay'
         }
       ],
-      series: [],
-
-      chartOptions: {
-        chart: {
-          height: 400,
-          type: 'bar',
-        },
-        plotOptions: {
-          bar: {
-            borderRadius: 10,
-            dataLabels: {
-              position: 'top', // top, center, bottom
-            },
-          }
-        },
-        dataLabels: {
-          enabled: true,
-          formatter: function (val) {
-            return val;
-          },
-          offsetY: -20,
-          style: {
-            fontSize: '12px',
-            colors: ["#304758"]
-          }
-        },
-
-        xaxis: {
-          categories: [],
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false
-          },
-          crosshairs: {
-            fill: {
-              type: 'gradient',
-              gradient: {
-                colorFrom: '#D8E3F0',
-                colorTo: '#BED1E6',
-                stops: [0, 100],
-                opacityFrom: 0.4,
-                opacityTo: 0.5,
-              }
-            }
-          },
-          tooltip: {
-            enabled: true,
-          }
-        },
-        yaxis: {
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false,
-          },
-          labels: {
-            show: false,
-            formatter: function (val) {
-              return val;
-            }
-          }
-
-        },
-        title: {
-          text: 'Thống kê sản phẩm bán chạy 7 ngày qua',
-          floating: true,
-          offsetY: 0,
-          align: 'center',
-          style: {
-            color: '#444',
-            fontFamily: '"Roboto","Helvetica Neue",Arial,sans-serif',
-            fontWeight:  'bold'
-          }
-        }
-      },
     }
   },
   mounted() {
@@ -206,23 +136,32 @@ export default {
       this.$refs.form.validate(valid => {
         if(!valid) return
         if(this.form.typeStatistical === 'topProduct') {
-          this.series = []
-          ApiFactory.callAPI(ConstantAPI["PRODUCT"].GET_HOT_PRODUCT, {}, {typeDate: this.form.dateStatistical}).then(rs => {
-            let listData = []
-            rs.response_data.forEach(item => {
-              listData.push(item[1])
-              this.chartOptions.xaxis.categories.push(item[0])
-            })
-            this.series.push({
-              name: 'Số lượng đặt mua',
-              data: listData
-            })
-          })
+          this.isShowSales = false
+          this.isShowSalesYear = false
+          this.isShowTopProduct = true
+          this.$refs.topProduct.onSearch()
+        }
+        if(this.form.typeStatistical === 'sales' && this.form.dateStatistical === 7) {
+          this.isShowSales = true
+          this.isShowSalesYear = false
+          this.isShowTopProduct = false
+          this.$refs.sales.onSearch()
+        }
+        if(this.form.typeStatistical === 'sales' && this.form.dateStatistical === 365) {
+          this.isShowSales = false
+          this.isShowSalesYear = true
+          this.isShowTopProduct = false
+          this.$refs.salesYear.onSearch()
         }
       })
     },
     onChangeTypeStatistical() {
       this.$refs.dateStatistical.resetField()
+    },
+    onClose() {
+      this.isShowTopProduct = false
+      this.isShowSales = false
+      this.isShowSalesYear = false
     }
   }
 }

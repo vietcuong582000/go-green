@@ -155,7 +155,7 @@
               colors: ["#304758"]
             }
           },
-
+          colors: ['#85ce61'],
           xaxis: {
             categories: this.get7Days(),
             position: 'top',
