@@ -16,7 +16,7 @@
                 placeholder="Mã sản phẩm"
                 maxlength="50"
                 :show-word-limit="true"
-                :disabled="formMode === FORM_MODE.DELETE"
+                :disabled="formMode === FORM_MODE.DELETE || formMode === FORM_MODE.EDIT"
               />
             </el-form-item>
           </el-col>

@@ -1,5 +1,5 @@
-// export const API_DEFAULT = 'https://63565f85a2d1844a977321ca.mockapi.io/api'
-export const API_DEFAULT = 'http://localhost:8888'
+export const API_DEFAULT = 'https://lode-api-production.up.railway.app'
+// export const API_DEFAULT = 'http://localhost:8888'
 
 export const FORM_MODE = {
   DEFAULT: 0,

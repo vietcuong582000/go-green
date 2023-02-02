@@ -62,31 +62,19 @@
 <!--            </div>-->
 <!--          </stats-card>-->
 <!--        </div>-->
-        <div class="col-md-6">
+        <div class="col-md-12">
           <card>
             <template slot="header">
               <h5 class="title" style="font-weight: bold">Danh sách sản phẩm sắp hết hạn</h5>
             </template>
             <div v-for="row in tableData.data">
-              <div v-if="!row.isExpired" class="expired-product" :style="expiredProductStyle(row.diffDays)">
+              <div v-if="!row.isExpired && row.diffDays > 2" class="expired-product" :style="expiredProductStyle(row.diffDays)">
+                Sản phẩm "<strong>{{ row.productName }}</strong>" còn &nbsp<strong>{{ row.diffDays }}</strong>&nbsp ngày đến ngày hết hạn (<strong>{{ row.expirationDate }}</strong>)
+              </div>
+              <div v-if="!row.isExpired && row.diffDays <= 2" class="expired-product" :style="expiredProductStyle(row.diffDays)">
                 Sản phẩm "<strong>{{ row.productName }}</strong>" còn &nbsp<strong>{{ row.diffDays }}</strong>&nbsp ngày đến ngày hết hạn (<strong>{{ row.expirationDate }}</strong>). Hãy giảm giá để sản phẩm được bán trước khi hết hạn
               </div>
-              <div v-else class="expired-product">
-                Sản phẩm "<strong>{{ row.productName }}</strong>" đã hết hạn. Yêu cầu chuyển trạng thái sản phẩm
-              </div>
-            </div>
-          </card>
-        </div>
-        <div class="col-md-6">
-          <card>
-            <template slot="header">
-              <h5 class="title" style="font-weight: bold">Danh sách sản phẩm sắp hết hạn</h5>
-            </template>
-            <div v-for="row in tableData.data">
-              <div v-if="!row.isExpired" class="expired-product" :style="expiredProductStyle(row.diffDays)">
-                Sản phẩm "<strong>{{ row.productName }}</strong>" còn &nbsp<strong>{{ row.diffDays }}</strong>&nbsp ngày đến ngày hết hạn (<strong>{{ row.expirationDate }}</strong>). Hãy giảm giá để sản phẩm được bán trước khi hết hạn
-              </div>
-              <div v-else class="expired-product">
+              <div v-if="row.isExpired" class="expired-product">
                 Sản phẩm "<strong>{{ row.productName }}</strong>" đã hết hạn. Yêu cầu chuyển trạng thái sản phẩm
               </div>
             </div>
@@ -217,7 +205,7 @@
     methods: {
       getListProductExpired() {
         ApiFactory.callAPI(ConstantAPI["PRODUCT"].GET_LIST_EXPIRED, {}, '').then(rs => {
-          let listProduct = rs.response_data.data
+          let listProduct = rs.response_data.data.slice(0,5)
           listProduct.forEach(item => {
             let expirationDate = new Date(item.expirationDate)
             if (expirationDate - new Date() > 0) {

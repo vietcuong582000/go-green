@@ -87,7 +87,7 @@
             :formatter="(row, col, val) => formatCategory(val)"
           />
           <el-table-column
-            prop="unitPrice"
+            prop="discountedPrice"
             label="Đơn giá"
             header-align="center"
             :show-overflow-tooltip="true"

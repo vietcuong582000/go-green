@@ -6,16 +6,16 @@
     :close-on-click-modal="false"
     @close="close">
     <el-card shadow="never">
-      <el-form ref="form" :model="form" label-width="120px" label-position="left">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px" label-position="left">
         <el-row :gutter="20">
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Mã danh mục">
-              <el-input v-model="form.code" placeholder="Mã danh mục"></el-input>
+            <el-form-item label="Mã danh mục" prop="code">
+              <el-input v-model="form.code" :disabled="formMode === FORM_MODE.DELETE || formMode === FORM_MODE.EDIT" placeholder="Mã danh mục"></el-input>
             </el-form-item>
           </el-col>
           <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
-            <el-form-item label="Tên danh mục">
-              <el-input v-model="form.name" placeholder="Tên danh mục"></el-input>
+            <el-form-item label="Tên danh mục" prop="name">
+              <el-input v-model="form.name" :disabled="formMode === FORM_MODE.DELETE" placeholder="Tên danh mục"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -54,6 +54,7 @@ import {ConstantAPI} from "@/utils/ConstantAPI";
 import storage from "@/firebase/firebase";
 import ApiFactory from "@/utils/apiFactory";
 import {errAlert, showAlert, SUCCESS} from "@/utils/Alert";
+import {requiredRule} from "@/utils/Validate";
 
 const FUNCTION_CODE = 'CATEGORY'
 export default {
@@ -81,6 +82,10 @@ export default {
   data() {
     return {
       form: {...FORM_DEFAULT},
+      rules: {
+        code: requiredRule('Mã danh mục'),
+        name: requiredRule('Tên danh mục')
+      },
       dialogVisible: false,
       FORM_MODE,
       isWaitingApi: false
