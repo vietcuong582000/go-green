@@ -15,6 +15,22 @@
             </i>
           </el-input>
         </el-col>
+        <el-col :span="6">
+          <el-select
+            v-model="keywordCategory"
+            placeholder="Danh mục"
+            style="width: 100%"
+            @change="getListProduct()"
+          >
+            <el-option
+              v-for="item in listDanhMuc"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
       </el-row>
       <el-row :gutter="20">
         <div v-if="productList.length > 0">
@@ -95,11 +111,14 @@ export default {
       currentPage: 1,
       pageSize: 12,
       isLoadingList: false,
-      keywordSearch: ''
+      keywordSearch: '',
+      keywordCategory: '',
+      listDanhMuc: [],
     }
   },
   mounted() {
     this.getListProduct()
+    this.getListCategory()
   },
   methods: {
     getListProduct() {
@@ -108,6 +127,9 @@ export default {
       if (this.keywordSearch) {
         param.keyword = this.keywordSearch
       }
+      if (this.keywordCategory) {
+        param.categoryId = this.keywordCategory
+      }
       ApiFactory.callAPI(ConstantAPI['PRODUCT'].GET_HOME, {}, param).then(rs => {
         this.productListAll = rs.response_data.data
         this.handleCurrentChange(1)
@@ -115,6 +137,14 @@ export default {
         this.isLoadingTable = false
       }).catch(err => {
         errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')
+      })
+    },
+    getListCategory() {
+      ApiFactory.callAPI(ConstantAPI['CATEGORY'].GET, {}, '').then(rs => {
+        this.listDanhMuc = rs.response_data.data
+        this.listDanhMuc.unshift({ id: '', name: "Tất cả" })
+      }).catch(err => {
+        errAlert(this, 'Lỗi khi lấy danh mục sản phẩm')
       })
     },
     showDetail(item) {

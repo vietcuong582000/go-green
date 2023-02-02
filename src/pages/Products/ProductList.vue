@@ -11,7 +11,6 @@
           </el-col>
           <el-col :span="6">
             <el-select
-              :disabled="formMode === FORM_MODE.DELETE"
               v-model="keywordCategory"
               placeholder="Danh mục"
               style="width: 100%"

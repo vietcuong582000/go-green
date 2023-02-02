@@ -15,7 +15,7 @@ export const ConstantAPI = {
       method: 'GET'
     },
     GET_HOME: {
-      url: `${API_DEFAULT}/home/product/search`,
+      url: `${API_DEFAULT}/home/product/search-with-category`,
       method: 'GET'
     },
     GET_BY_ID: {
