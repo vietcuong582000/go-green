@@ -336,7 +336,11 @@ export default {
         {
           value: 'Giỏ',
           label: 'Giỏ'
-        }
+        },
+        {
+          value: 'Hộp',
+          label: 'Hộp'
+        },
       ],
       listTrangThai: [
         {
