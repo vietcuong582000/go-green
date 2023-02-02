@@ -167,7 +167,7 @@
       </el-form>
     </el-card>
     <span slot="footer">
-      <el-button type="success" @click="onSave">Lưu</el-button>
+      <el-button type="success" @click="onConfirmSave">Lưu</el-button>
       <el-button @click="close">Đóng</el-button>
     </span>
     <add-product
@@ -241,48 +241,60 @@ export default {
         errAlert(this, 'Lỗi khi lấy danh sách trạng thái đơn hàng')
       })
     },
-    onSave() {
+    onConfirmSave() {
       if(!this.tableData || this.tableData.length === 0) {
         errAlert(this, 'Hãy thêm sản phẩm vào đơn hàng')
         return
       }
       this.$refs.form.validate(valid => {
         if (!valid) return
-        let orderDetails = []
-        this.tableData.forEach(item => {
-          if (item.productName !== 'Tổng tiền') {
-            orderDetails.push({
-              "productId": item.productId,
-              "quantityOrder": item.quantityOrder,
-            })
-          }
+        this.$confirm(`Bạn có chắc muốn tạo đơn hàng`, '', {
+          confirmButtonText: 'Có',
+          cancelButtonText: 'Không',
+          cancelButtonClass: 'el-icon-close',
+          confirmButtonClass: 'el-icon-check',
+          type: 'warning'
+        }).then(() => {
+          this.onSave()
+        }).catch(_ => {
         })
-        orderDetails.forEach((item) => {
-          item.quantityOrder = Number(item.quantityOrder)
-        })
-        this.payload = {
-          "shippingAddress": this.form.shippingAddress,
-          "paymentMethod": 'COD',
-          "orderStatus": this.form.orderStatus,
-          "customerInfo": {
-            "fullName": this.form.fullName,
-            "phoneNumber": this.form.customerNumber,
-            "email": this.form.customerEmail
-          },
-          "orderDetails": orderDetails
-        }
-        ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE, this.payload, {}).then(rs => {
-          this.$notify({
-            title: 'Tạo đơn hàng thành công',
-            dangerouslyUseHTMLString: true,
-            message: 'Đơn hàng đã được tạo thành công',
-            type: 'success'
+      })
+    },
+    onSave() {
+      let orderDetails = []
+      this.tableData.forEach(item => {
+        if (item.productName !== 'Tổng tiền') {
+          orderDetails.push({
+            "productId": item.productId,
+            "quantityOrder": item.quantityOrder,
           })
-          this.close()
-          this.$emit('save-success')
-        }).catch(err => {
-          errAlert(this, 'Có lỗi xảy ra')
+        }
+      })
+      orderDetails.forEach((item) => {
+        item.quantityOrder = Number(item.quantityOrder)
+      })
+      this.payload = {
+        "shippingAddress": this.form.shippingAddress,
+        "paymentMethod": 'COD',
+        "orderStatus": this.form.orderStatus,
+        "customerInfo": {
+          "fullName": this.form.fullName,
+          "phoneNumber": this.form.customerNumber,
+          "email": this.form.customerEmail
+        },
+        "orderDetails": orderDetails
+      }
+      ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE, this.payload, {}).then(rs => {
+        this.$notify({
+          title: 'Tạo đơn hàng thành công',
+          dangerouslyUseHTMLString: true,
+          message: 'Đơn hàng đã được tạo thành công',
+          type: 'success'
         })
+        this.close()
+        this.$emit('save-success')
+      }).catch(err => {
+        errAlert(this, 'Có lỗi xảy ra')
       })
     },
     onDelete(index, row) {

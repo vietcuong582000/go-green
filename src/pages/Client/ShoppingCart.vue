@@ -143,7 +143,7 @@
                 <el-button
                   class="pay-button"
                   type="success"
-                  @click="onOrder"
+                  @click="onShowConfirm"
                 >Đặt hàng</el-button>
               </el-col>
             </el-row>
@@ -250,30 +250,6 @@ export default {
     formatCurrencyFunction(number) {
       return formatCurrency(number)
     },
-    // onShowConfirm() {
-    //   let message
-    //   let type
-    //   if (this.formMode === FORM_MODE.CREATE || this.formMode === FORM_MODE.EDIT) {
-    //     message = 'Bạn có chắc chắn muốn lưu dữ liệu?'
-    //     type = 'success'
-    //   } else if (this.formMode === FORM_MODE.DELETE) {
-    //     message = 'Bạn có chắc chắn muốn xóa dữ liệu?'
-    //     type = 'warning'
-    //   }
-    //   this.$refs.form.validate(valid => {
-    //     if (!valid) return false
-    //     this.$confirm(message, '', {
-    //       confirmButtonText: 'Có',
-    //       cancelButtonText: 'Không',
-    //       cancelButtonClass: 'el-icon-close',
-    //       confirmButtonClass: 'el-icon-check',
-    //       type: type
-    //     }).then(() => {
-    //       this.onSave()
-    //     }).catch(_ => {
-    //     })
-    //   })
-    // },
     onChangeQuantity(row) {
       if(row.quantity < 1) {
         row.quantity = 1
@@ -303,96 +279,109 @@ export default {
       sums[2] = this.formatCurrencyFunction(tongTien)
       return sums;
     },
-    onOrder() {
+    onShowConfirm() {
       this.$refs.form.validate(valid => {
         if(!valid) return
-        let orderDetails = []
-        this.tableData.forEach(item => {
-          orderDetails.push({
-            "quantityOrder": Number(item.quantity),
-            "productId": item.id
-          })
+        this.$confirm(`Bạn có chắc muốn tạo đơn hàng này`, '', {
+          confirmButtonText: 'Có',
+          cancelButtonText: 'Không',
+          cancelButtonClass: 'el-icon-close',
+          confirmButtonClass: 'el-icon-check',
+          type: 'warning'
+        }).then(() => {
+          this.onOrder()
+        }).catch(err => {
+          console.log(err)
         })
-        this.payload = {
-          "shippingAddress": this.form.shippingAddress,
-          "paymentMethod": this.form.paymentMethod,
-          "customerInfo": {
-            "fullName": this.form.fullName,
-            "phoneNumber": this.form.customerNumber,
-            "email": this.form.customerEmail
-          },
-          "orderStatus": "NEW",
-          "orderDetails": orderDetails
-        }
-        localStorage.setItem('order', JSON.stringify(this.payload))
-        if(this.form.paymentMethod === 'CREDIT_CARD') {
-          let urlVnPay = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
-          let hashSecret = 'YTPTETIVKQJKEYPIDNKKDGQOKXYTSHDJ'
-          let year = new Date().getFullYear()
-          let month = new Date().getMonth() + 1
-          if (month < 10) {
-            month = '0' + month
-          }
-          let date = new Date().getDate()
-          if (date < 10) {
-            date = '0' + date
-          }
-          let hour = new Date().getHours()
-          if(hour < 10) {
-            hour = '0' + hour
-          }
-          let minute = new Date().getMinutes()
-          if(minute < 10) {
-            minute = '0' + minute
-          }
-          let second = new Date().getSeconds()
-          if(second < 10) {
-            second = '0' + second
-          }
-          console.log('' + year + month + date + hour + minute + second)
-          let params = {
-            vnp_Amount: this.totalPrice * 100,
-            vnp_Command: 'pay',
-            vnp_CreateDate: '' + year + month + date + hour + minute + second ,
-            vnp_CurrCode: 'VND',
-            vnp_IpAddr: '126.0.0.1',
-            vnp_Locale: 'vn',
-            vnp_OrderInfo: 'Thanh+toan+don+hang+GoGreen',
-            vnp_OrderType: 'other',
-            vnp_ReturnUrl: 'http%3A%2F%2Flocalhost%3A8080%2F%23%2Fpayment-status',
-            vnp_TmnCode: 'TKFPLOQ4',
-            vnp_TxnRef: '' + year + month + date + hour + minute + second + new Date().getMilliseconds(),
-            vnp_Version: '2.1.0',
-          }
-          let strParam = Object.keys(params).map(function(key) {
-            return key + '=' + params[key];
-          }).join('&');
-          urlVnPay = `${urlVnPay}?${strParam}`;
-          const secureHash = sha265(hashSecret + strParam)
-          urlVnPay = urlVnPay + '&vnp_SecureHash=' + secureHash
-          console.log(urlVnPay)
-          this.urlVnPay = urlVnPay
-          setTimeout(() => {
-            document.getElementById('urlVnPay').click()
-          }, 1000)
-        } else {
-          ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE_HOME, this.payload, {}).then(rs => {
-            this.$notify({
-              title: 'Tạo đơn hàng thành công',
-              dangerouslyUseHTMLString: true,
-              message: 'Đơn hàng của bạn đã được tạo và gửi cho hệ thống thành công',
-              type: 'success'
-            })
-            console.log('alo')
-            // this.$refs.form.reset()
-            localStorage.removeItem("cart")
-            this.tableData = []
-            this.$refs.form.resetFields()
-          }).catch(err => {
-            errAlert(this, 'Có lỗi xảy ra')
-          })
-        }
       })
+    },
+    onOrder() {
+      let orderDetails = []
+      this.tableData.forEach(item => {
+        orderDetails.push({
+          "quantityOrder": Number(item.quantity),
+          "productId": item.id
+        })
+      })
+      this.payload = {
+        "shippingAddress": this.form.shippingAddress,
+        "paymentMethod": this.form.paymentMethod,
+        "customerInfo": {
+          "fullName": this.form.fullName,
+          "phoneNumber": this.form.customerNumber,
+          "email": this.form.customerEmail
+        },
+        "orderStatus": "NEW",
+        "orderDetails": orderDetails
+      }
+      localStorage.setItem('order', JSON.stringify(this.payload))
+      if(this.form.paymentMethod === 'CREDIT_CARD') {
+        let urlVnPay = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
+        let hashSecret = 'YTPTETIVKQJKEYPIDNKKDGQOKXYTSHDJ'
+        let year = new Date().getFullYear()
+        let month = new Date().getMonth() + 1
+        if (month < 10) {
+          month = '0' + month
+        }
+        let date = new Date().getDate()
+        if (date < 10) {
+          date = '0' + date
+        }
+        let hour = new Date().getHours()
+        if(hour < 10) {
+          hour = '0' + hour
+        }
+        let minute = new Date().getMinutes()
+        if(minute < 10) {
+          minute = '0' + minute
+        }
+        let second = new Date().getSeconds()
+        if(second < 10) {
+          second = '0' + second
+        }
+        console.log('' + year + month + date + hour + minute + second)
+        let params = {
+          vnp_Amount: this.totalPrice * 100,
+          vnp_Command: 'pay',
+          vnp_CreateDate: '' + year + month + date + hour + minute + second ,
+          vnp_CurrCode: 'VND',
+          vnp_IpAddr: '126.0.0.1',
+          vnp_Locale: 'vn',
+          vnp_OrderInfo: 'Thanh+toan+don+hang+GoGreen',
+          vnp_OrderType: 'other',
+          vnp_ReturnUrl: 'http%3A%2F%2Flocalhost%3A8080%2F%23%2Fpayment-status',
+          vnp_TmnCode: 'TKFPLOQ4',
+          vnp_TxnRef: '' + year + month + date + hour + minute + second + new Date().getMilliseconds(),
+          vnp_Version: '2.1.0',
+        }
+        let strParam = Object.keys(params).map(function(key) {
+          return key + '=' + params[key];
+        }).join('&');
+        urlVnPay = `${urlVnPay}?${strParam}`;
+        const secureHash = sha265(hashSecret + strParam)
+        urlVnPay = urlVnPay + '&vnp_SecureHash=' + secureHash
+        console.log(urlVnPay)
+        this.urlVnPay = urlVnPay
+        setTimeout(() => {
+          document.getElementById('urlVnPay').click()
+        }, 1000)
+      } else {
+        ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE_HOME, this.payload, {}).then(rs => {
+          this.$notify({
+            title: 'Tạo đơn hàng thành công',
+            dangerouslyUseHTMLString: true,
+            message: 'Đơn hàng của bạn đã được tạo và gửi cho hệ thống thành công',
+            type: 'success'
+          })
+          console.log('alo')
+          // this.$refs.form.reset()
+          localStorage.removeItem("cart")
+          this.tableData = []
+          this.$refs.form.resetFields()
+        }).catch(err => {
+          errAlert(this, 'Có lỗi xảy ra')
+        })
+      }
     }
   },
 }
