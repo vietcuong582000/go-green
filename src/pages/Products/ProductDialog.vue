@@ -387,8 +387,7 @@ export default {
         message = 'Bạn có chắc chắn muốn xóa dữ liệu?'
         type = 'warning'
       }
-      this.$refs.form.validate(valid => {
-        if (!valid && this.formMode !== FORM_MODE.DELETE) return false
+      if(this.formMode === FORM_MODE.DELETE) {
         this.$confirm(message, '', {
           confirmButtonText: 'Có',
           cancelButtonText: 'Không',
@@ -399,7 +398,21 @@ export default {
           this.onSave()
         }).catch(_ => {
         })
-      })
+      } else {
+        this.$refs.form.validate(valid => {
+          if (!valid) return false
+          this.$confirm(message, '', {
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không',
+            cancelButtonClass: 'el-icon-close',
+            confirmButtonClass: 'el-icon-check',
+            type: type
+          }).then(() => {
+            this.onSave()
+          }).catch(_ => {
+          })
+        })
+      }
     },
     async onSave() {
       let api
@@ -500,6 +513,9 @@ export default {
     validateExpiredDate(rule, value, callback) {
       if(new Date(this.form.importDate) > new Date(this.form.expirationDate)) {
         callback(new Error(`Ngày hết hạn không được nhỏ hơn ngày nhập`))
+      }
+      else {
+        callback()
       }
       // if(new Date(this.form.expirationDate) < new Date()) {
       //   callback(new Error(`Ngày hết hạn không được nhỏ hơn ngày hiện tại`))

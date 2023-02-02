@@ -36,7 +36,7 @@ export default {
           curve: 'straight'
         },
         title: {
-          text: 'Doanh số 7 ngày qua',
+          text: 'Doanh số trong năm nay',
           align: 'left',
           style: {
             color: '#444',

@@ -321,6 +321,7 @@ export default {
             "phoneNumber": this.form.customerNumber,
             "email": this.form.customerEmail
           },
+          "orderStatus": "NEW",
           "orderDetails": orderDetails
         }
         localStorage.setItem('order', JSON.stringify(this.payload))

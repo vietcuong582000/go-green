@@ -83,7 +83,7 @@ export default {
       isShowSalesYear: false,
       form: {
         typeStatistical: 'topProduct',
-        dateStatistical: ''
+        dateStatistical: 7
       },
       rules: {
         typeStatistical: requiredRule('Loại thống kê'),

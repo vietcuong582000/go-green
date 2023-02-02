@@ -39,7 +39,7 @@ export default {
           curve: 'straight'
         },
         title: {
-          text: 'Doanh số 7 ngày qua',
+          text: 'Doanh số ' + this.dateStatistical + ' ngày qua',
           align: 'left',
           style: {
             color: '#444',

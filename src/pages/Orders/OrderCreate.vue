@@ -125,6 +125,29 @@
               width="300"
               :show-overflow-tooltip="true">
             </el-table-column>
+            <el-table-column
+              label="Thao tác"
+              header-align="center"
+              width="90"
+              :show-overflow-tooltip="true"
+              align="center"
+            >
+              <template slot-scope="{row, $index}">
+                <el-tooltip :content="'Xóa'" :open-delay="200" placement="top" effect="light">
+                  <el-button
+                    v-if="!row.notShowInputQuantity"
+                    type="danger"
+                    size="small"
+                    style="outline: none"
+                    icon="el-icon-delete"
+                    circle
+                    plain
+                    @click="onDelete($index, row)"
+                  >
+                  </el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
           </el-table>
         </el-row>
         <el-row :gutter="20" style="margin-top: 20px">
@@ -260,6 +283,25 @@ export default {
         }).catch(err => {
           errAlert(this, 'Có lỗi xảy ra')
         })
+      })
+    },
+    onDelete(index, row) {
+      this.$confirm(`Bạn có chắc muốn xóa sản phẩm "${row.productName}" khỏi đơn hàng`, '', {
+        confirmButtonText: 'Có',
+        cancelButtonText: 'Không',
+        cancelButtonClass: 'el-icon-close',
+        confirmButtonClass: 'el-icon-check',
+        type: 'warning'
+      }).then(() => {
+        this.tableData.splice(index, 1)
+        this.tableData.forEach((item, index) => {
+          if(index === this.tableData.length - 1) {
+            item.subTotal = this.formatCurrencyFunction(Number(this.totalPrice))
+          } else {
+            item.subTotal = this.formatCurrencyFunction(item.discountedPrice * item.quantityOrder)
+          }
+        })
+      }).catch(_ => {
       })
     },
     showDialogAddProduct() {
