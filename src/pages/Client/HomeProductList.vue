@@ -4,21 +4,37 @@
     <el-card shadow="never">
       <span slot="header" style="font-weight: 600; font-size: 20px">Danh sách sản phẩm</span>
       <el-row :gutter="20">
-        <el-col v-for="item in productList" :key="item.id" style="padding-bottom: 10px; padding-top: 10px" :xl="6" :lg="6" :md="8" :sm="12" :xs="12">
-          <el-card shadow="hover" style="cursor: pointer" :body-style="{ padding: '15px' }" @click.native="showDetail(item)">
-            <div style="height: 200px">
-              <img style="width: 100%; max-height: 210px; margin: auto; display: block" :src="item.imgUrl" class="image"  alt="" />
-            </div>
-            <div style="margin-top: 15px">
-              <span style="font-size: 18px;font-weight: 700">{{ item.productName }}</span>
-              <div class="icon-discount">-{{ item.discount }}%</div>
-              <div>
-                <span style="font-weight: 600;color: red;">{{ formatCurrency(item.discountedPrice) }}/{{ item.unit }}</span>
-                <span style="margin-left: 15px; font-size: 14px; text-decoration: line-through;">{{ formatCurrency(item.unitPrice) }}/{{ item.unit }}</span>
-              </div>
-            </div>
-          </el-card>
+        <el-col :span="6">
+          <el-input
+            v-model="keywordSearch"
+            placeholder="Tìm kiếm sản phẩm"
+            maxlength="225"
+            @input="searchProduct"
+          >
+            <i class="el-icon-search el-input__icon" slot="prefix">
+            </i>
+          </el-input>
         </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <div v-if="productList.length > 0">
+          <el-col v-for="item in productList" :key="item.id" style="padding-bottom: 10px; padding-top: 10px" :xl="6" :lg="6" :md="8" :sm="12" :xs="12">
+            <el-card shadow="hover" style="cursor: pointer" :body-style="{ padding: '15px' }" @click.native="showDetail(item)">
+              <div style="height: 200px">
+                <img style="width: 100%; max-height: 210px; margin: auto; display: block" :src="item.imgUrl" class="image"  alt="" />
+              </div>
+              <div style="margin-top: 15px">
+                <span style="font-size: 18px;font-weight: 700">{{ item.productName }}</span>
+                <div class="icon-discount">-{{ item.discount }}%</div>
+                <div>
+                  <span style="font-weight: 600;color: red;">{{ formatCurrency(item.discountedPrice) }}/{{ item.unit }}</span>
+                  <span style="margin-left: 15px; font-size: 14px; text-decoration: line-through;">{{ formatCurrency(item.unitPrice) }}/{{ item.unit }}</span>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </div>
+        <div v-else style="margin: 20px;text-align: center;">Không có sản phẩm nào</div>
       </el-row>
     </el-card>
     <div style="height: 20px"></div>
@@ -77,8 +93,9 @@ export default {
       productListAll: [],
       total: 0,
       currentPage: 1,
-      pageSize: 2,
-      isLoadingList: false
+      pageSize: 12,
+      isLoadingList: false,
+      keywordSearch: ''
     }
   },
   mounted() {
@@ -87,7 +104,11 @@ export default {
   methods: {
     getListProduct() {
       this.isLoadingList = true
-      ApiFactory.callAPI(ConstantAPI['PRODUCT'].GET_HOME, {}, {}).then(rs => {
+      const param = {}
+      if (this.keywordSearch) {
+        param.keyword = this.keywordSearch
+      }
+      ApiFactory.callAPI(ConstantAPI['PRODUCT'].GET_HOME, {}, param).then(rs => {
         this.productListAll = rs.response_data.data
         this.handleCurrentChange(1)
         this.total = rs.response_data.total_element
@@ -106,6 +127,12 @@ export default {
       this.currentPage = val
       this.productList = this.productListAll.slice((val-1) * this.pageSize, (val-1) * this.pageSize + this.pageSize)
       scrollTo(0, 800)
+    },
+    searchProduct() {
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        this.getListProduct()
+      }, 300)
     },
     formatCurrency
   }

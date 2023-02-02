@@ -34,7 +34,12 @@
           </el-card>
         </el-col>
       </el-row>
+      <div style="text-align: right">
+        <span class="more" @click="gotoProductList">Xem thêm</span>
+      </div>
     </el-card>
+    <div class="img-divider">
+    </div>
   </div>
 </template>
 <style>
@@ -54,6 +59,27 @@
   margin-left: 15px;
   color: #FFFFFF;
   font-weight: 600;
+}
+
+.img-divider {
+  min-height: 250px;
+  margin-top: 20px;
+  background-image: url('../../../public/img/hinh-nen-trai-cay-dep-7.jpg');
+  background-color: rgba(116, 116, 116, 0.66);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  filter: brightness(40%)
+}
+
+.more {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #0a6715;
+}
+
+.more:hover {
+  color: #0f8b20;
 }
 
 .el-carousel__item:nth-child(2n) {
@@ -88,7 +114,7 @@ export default {
     getListProduct() {
       this.isLoadingList = true
       ApiFactory.callAPI(ConstantAPI['PRODUCT'].GET_HOME, {}, '').then(rs => {
-        this.productList = rs.response_data.data.slice(0, 9);
+        this.productList = rs.response_data.data.slice(0, 12);
       }).catch(err => {
         errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')
       })
@@ -97,6 +123,11 @@ export default {
       this.$router.push({
         name: 'product',
         params: { id: item.id }
+      })
+    },
+    gotoProductList() {
+      this.$router.push({
+        name: 'homeProductList'
       })
     },
     formatCurrency

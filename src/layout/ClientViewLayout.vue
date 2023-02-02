@@ -1,6 +1,11 @@
 <template>
   <div style="background-color: #d5f5e9;">
     <div class="header-home">
+      <div style="background-color: #FFFFFF; border-radius: 50%">
+        <div class="icon-gogreen">
+        </div>
+      </div>
+      <h4 style="color: #FFFFFF; margin: 10px; line-height: 2">GoGreen</h4>
       <el-menu
         :default-active="activeIndex"
         class="header-menu"
@@ -25,7 +30,7 @@
 <!--        </el-submenu>-->
         <el-menu-item index="4" @click="goToCart"><a target="_blank">Giỏ hàng</a></el-menu-item>
 <!--        <el-menu-item index="5"><a target="_blank">Đơn hàng</a></el-menu-item>-->
-        <el-menu-item index="6"><a target="_blank">Giới thiệu</a></el-menu-item>
+<!--        <el-menu-item index="6"><a target="_blank">Giới thiệu</a></el-menu-item>-->
       </el-menu>
     </div>
     <div class="background">
@@ -58,7 +63,7 @@
               <span>Hình thức thanh toán:</span>
               <div class="logo-container">
                 <img style="height: 30px" src="../../public/img/vnpay2.jpg" alt=""/>
-                <img style="height: 30px" src="../../public/img/momo.png" alt=""/>
+<!--                <img style="height: 30px" src="../../public/img/momo.png" alt=""/>-->
                 <img style="height: 30px" src="../../public/img/visa.png" alt=""/>
               </div>
             </div>
@@ -79,6 +84,7 @@
   background-position: 50%;
 }
 .header-home {
+  display: flex;
   width: 100%;
   position: fixed;
   z-index: 999;
@@ -118,6 +124,14 @@
   display: flex;
   gap: 10px;
   margin-top: 8px;
+}
+.icon-gogreen {
+  width: 45px;
+  height: 45px;
+  margin: 10px;
+  background-image: url('../../public/img/furion.png');
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 >>> .el-menu--horizontal>.el-menu-item {
   height: 30px;
