@@ -59,7 +59,7 @@ export default {
     }
     this.payload = JSON.parse(localStorage.getItem('order'))
     console.log(this.payload)
-    this.payload = {...this.payload, orderStatus: "NEW"}
+    this.payload = {...this.payload, orderStatus: "PAID"}
     ApiFactory.callAPI(ConstantAPI['ORDER'].CREATE_HOME, this.payload, {}).then(rs => {
       console.log(rs)
     }).catch(err => {
