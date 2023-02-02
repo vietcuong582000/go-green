@@ -481,7 +481,7 @@ export default {
       }
       this.form.discountedPrice = this.form.unitPrice - Math.round((this.form.unitPrice * this.form.discount) / 100)
       if(!this.form.discount) {
-        this.form.discountedPrice = ''
+        this.form.discountedPrice = this.form.unitPrice
       }
     },
     onChangeDiscountPrice() {

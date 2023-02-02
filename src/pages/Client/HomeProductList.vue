@@ -41,10 +41,10 @@
               </div>
               <div style="margin-top: 15px">
                 <span style="font-size: 18px;font-weight: 700">{{ item.productName }}</span>
-                <div class="icon-discount">-{{ item.discount }}%</div>
+                <div v-if="item.discount > 0" class="icon-discount">-{{ item.discount }}%</div>
                 <div>
                   <span style="font-weight: 600;color: red;">{{ formatCurrency(item.discountedPrice) }}/{{ item.unit }}</span>
-                  <span style="margin-left: 15px; font-size: 14px; text-decoration: line-through;">{{ formatCurrency(item.unitPrice) }}/{{ item.unit }}</span>
+                  <span v-if="item.discount > 0" style="margin-left: 15px; font-size: 14px; text-decoration: line-through;">{{ formatCurrency(item.unitPrice) }}/{{ item.unit }}</span>
                 </div>
               </div>
             </el-card>

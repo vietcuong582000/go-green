@@ -1,7 +1,6 @@
 <template>
-  <el-card shadow="never">
+  <div>
     <vue-title title="GoGreen - Chi tiết sản phẩm"></vue-title>
-    <span slot="header" style="font-weight: 600; font-size: 20px">Thông tin chi tiết sản phẩm</span>
     <el-row :gutter="20">
       <el-col :span="12">
         <div style="height: 300px; max-width: 100%">
@@ -41,7 +40,27 @@
         </div>
       </el-col>
     </el-row>
-  </el-card>
+    <el-card style="margin-top: 20px" shadow="never">
+      <span slot="header" style="font-weight: 600; font-size: 20px">Sản phẩm tương tự</span>
+      <el-row :gutter="20">
+        <el-col v-for="item in productList" :key="item.id" style="padding-bottom: 10px; padding-top: 10px" :xl="6" :lg="6" :md="6" :sm="6" :xs="6">
+          <el-card shadow="hover" style="cursor: pointer" :body-style="{ padding: '15px' }" @click.native="showDetail(item)">
+            <div style="height: 200px">
+              <img style="width: 100%; max-height: 210px; margin: auto; display: block" :src="item.imgUrl" class="image"  alt="" />
+            </div>
+            <div style="margin-top: 15px">
+              <span style="font-size: 18px;font-weight: 700">{{ item.productName }}</span>
+              <div v-if="item.discount > 0" class="icon-discount">-{{ item.discount }}%</div>
+              <div>
+                <span style="font-weight: 600;color: red;">{{ formatCurrency(item.discountedPrice) }}/{{ item.unit }}</span>
+                <span v-if="item.discount > 0" style="margin-left: 15px; font-size: 14px; text-decoration: line-through;">{{ formatCurrency(item.unitPrice) }}/{{ item.unit }}</span>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </el-card>
+  </div>
 </template>
 <style scoped>
 .buy-button {
@@ -78,7 +97,8 @@ export default {
   data() {
     return {
       productDetail: {},
-      quantity: 1
+      quantity: 1,
+      productList: ''
     }
   },
   async beforeRouteUpdate(to, from) {
@@ -95,6 +115,8 @@ export default {
       this.productDetail = rs.response_data
     }).catch(err => {
       errAlert(this, 'Lỗi khi lấy thông tin sản phẩm')
+    }).finally(() => {
+      this.getListProduct(this.productDetail.categories[0].id)
     })
   },
   methods: {
@@ -124,6 +146,23 @@ export default {
       this.addToCart(true)
       this.$router.push({
         name: 'cart'
+      })
+    },
+    getListProduct(category) {
+      const param = {}
+      if (category) {
+        param.categoryId = category
+      }
+      ApiFactory.callAPI(ConstantAPI['PRODUCT'].GET_HOME, {}, param).then(rs => {
+        this.productList = rs.response_data.data.slice(0,4)
+      }).catch(err => {
+        errAlert(this, 'Lỗi khi lấy danh sách sản phẩm')
+      })
+    },
+    showDetail(item) {
+      this.$router.push({
+        name: 'product',
+        params: { id: item.id }
       })
     },
     formatCurrency

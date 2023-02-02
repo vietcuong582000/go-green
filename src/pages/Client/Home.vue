@@ -25,10 +25,10 @@
             </div>
             <div style="margin-top: 15px">
               <span style="font-size: 18px;font-weight: 700">{{ item.productName }}</span>
-              <div class="icon-discount">-{{ item.discount }}%</div>
+              <div v-if="item.discount > 0" class="icon-discount">-{{ item.discount }}%</div>
               <div>
                 <span style="font-weight: 600;color: red;">{{ formatCurrency(item.discountedPrice) }}/{{ item.unit }}</span>
-                <span style="margin-left: 15px; font-size: 14px; text-decoration: line-through;">{{ formatCurrency(item.unitPrice) }}/{{ item.unit }}</span>
+                <span v-if="item.discount > 0" style="margin-left: 15px; font-size: 14px; text-decoration: line-through;">{{ formatCurrency(item.unitPrice) }}/{{ item.unit }}</span>
               </div>
             </div>
           </el-card>
@@ -38,8 +38,6 @@
         <span class="more" @click="gotoProductList">Xem thêm</span>
       </div>
     </el-card>
-    <div class="img-divider">
-    </div>
   </div>
 </template>
 <style>
@@ -59,17 +57,6 @@
   margin-left: 15px;
   color: #FFFFFF;
   font-weight: 600;
-}
-
-.img-divider {
-  min-height: 250px;
-  margin-top: 20px;
-  background-image: url('../../../public/img/hinh-nen-trai-cay-dep-7.jpg');
-  background-color: rgba(116, 116, 116, 0.66);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: 50%;
-  filter: brightness(40%)
 }
 
 .more {

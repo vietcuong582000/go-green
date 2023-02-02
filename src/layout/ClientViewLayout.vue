@@ -38,7 +38,8 @@
       <div class="main-content">
         <router-view></router-view>
       </div>
-
+    <div class="img-divider">
+    </div>
     <div class="footer-home">
       <div style="color: #FFFFFF" class="footer-content">
         <el-row :gutter="20">
@@ -133,6 +134,20 @@
   background-size: cover;
   background-repeat: no-repeat;
 }
+
+.img-divider {
+  min-height: 250px;
+  width: 95%;
+  margin: 20px auto 20px auto;
+  border-radius: 10px;
+  background-image: url('../../public/img/hinh-nen-trai-cay-dep-7.jpg');
+  background-color: rgba(116, 116, 116, 0.66);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  filter: brightness(60%)
+}
+
 >>> .el-menu--horizontal>.el-menu-item {
   height: 30px;
   line-height: 30px;
